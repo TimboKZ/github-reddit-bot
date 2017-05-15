@@ -1,3 +1,7 @@
+# JetBrains IDE and Vim files
+/.idea/
+*.swp
+
 # Logs
 logs
 *.log
