@@ -1,3 +1,6 @@
+# Bot config
+config.json
+
 # JetBrains IDE and Vim files
 /.idea/
 *.swp
