@@ -4,7 +4,8 @@
   "description": "A Reddit bot that posts updates from GitHub repositories to a chosen subreddit.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src/ ./test/"
   },
   "repository": {
     "type": "git",
@@ -15,10 +16,20 @@
     "github",
     "bot"
   ],
-  "author": "Timur Kuzhagaliyev",
+  "author": {
+    "name": "Timur Kuzhagaluyev",
+    "email": "tim.kuzh@gmail.com",
+    "url": "https://foxypanda.me/"
+  },
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/TimboKZ/github-reddit-bot/issues"
   },
-  "homepage": "https://github.com/TimboKZ/github-reddit-bot#readme"
+  "homepage": "https://github.com/TimboKZ/github-reddit-bot#readme",
+  "dependencies": {
+    "snoocore": "^3.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  }
 }
