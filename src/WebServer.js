@@ -25,7 +25,8 @@ class WebServer {
     setup() {
         this.express = express();
         this.express.get('/', (req, res) => {
-            res.sendFile(path.join('..', 'index.html'));
+            let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
+            res.sendFile(indexPath);
         });
     }
 
