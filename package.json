@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/TimboKZ/github-reddit-bot#readme",
   "engines": {
-    "node": "^6.0.0"
+    "node": "7.x.x"
   },
   "dependencies": {
     "express": "^4.15.2",
