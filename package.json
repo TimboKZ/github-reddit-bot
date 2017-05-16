@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "express": "^4.15.2",
-    "snoocore": "^3.3.1"
+    "snoowrap": "^1.14.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
