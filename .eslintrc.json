@@ -1,0 +1,40 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "before": true,
+    "after": true
+  },
+  "plugins": [
+    "mocha"
+  ],
+  "rules": {
+    "mocha/handle-done-callback": "error",
+    "eol-last": 1,
+    "indent": [
+      "error",
+      4
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "no-console": "off"
+  }
+}

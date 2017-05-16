@@ -1,0 +1,44 @@
+{
+  "name": "github-reddit-bot",
+  "version": "1.0.0",
+  "description": "A Reddit bot that posts updates from GitHub repositories to a chosen subreddit.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha ./test/",
+    "lint": "eslint ./src/ ./test/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimboKZ/github-reddit-bot.git"
+  },
+  "keywords": [
+    "reddit",
+    "github",
+    "bot"
+  ],
+  "author": {
+    "name": "Timur Kuzhagaluyev",
+    "email": "tim.kuzh@gmail.com",
+    "url": "https://foxypanda.me/"
+  },
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TimboKZ/github-reddit-bot/issues"
+  },
+  "homepage": "https://github.com/TimboKZ/github-reddit-bot#readme",
+  "engines": {
+    "node": "7.10.0"
+  },
+  "dependencies": {
+    "express": "^4.15.2",
+    "snoocore": "^3.3.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-mocha": "^4.9.0",
+    "mocha": "^3.4.1",
+    "supertest": "^3.0.0"
+  }
+}
