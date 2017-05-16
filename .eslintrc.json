@@ -7,7 +7,17 @@
   "parserOptions": {
     "sourceType": "module"
   },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "before": true,
+    "after": true
+  },
+  "plugins": [
+    "mocha"
+  ],
   "rules": {
+    "mocha/handle-done-callback": "error",
     "eol-last": 1,
     "indent": [
       "error",

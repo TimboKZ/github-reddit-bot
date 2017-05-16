@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./test/",
     "lint": "eslint ./src/ ./test/"
   },
   "repository": {
@@ -35,6 +35,10 @@
     "snoocore": "^3.3.1"
   },
   "devDependencies": {
-    "eslint": "^3.19.0"
+    "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "eslint-plugin-mocha": "^4.9.0",
+    "mocha": "^3.4.1",
+    "supertest": "^3.0.0"
   }
 }
