@@ -1,6 +1,8 @@
 # GitHub Reddit Bot
 
-A bot that automatically scans github repos for changes and submits them to the appropriate subreddit.
+A bot that watches GitHub repositories for changes and automatically submits them to an appropriate subreddit.
+
+The dev instance of the bot is hosted on Heroku and can be accessed via [https://github-reddit-bot.herokuapp.com/](https://github-reddit-bot.herokuapp.com/).
 
 # How it works
 
