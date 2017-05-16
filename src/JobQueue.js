@@ -8,6 +8,8 @@
 
 class JobQueue {
 
+    // TODO: Use secret to authorise users
+
 }
 
 module.exports = JobQueue;

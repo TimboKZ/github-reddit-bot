@@ -28,11 +28,16 @@ class WebServer {
             let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
             res.sendFile(indexPath);
         });
+        this.express.all('/hooks', (req, res) => {
+            // TODO: Change this to use JobQueue
+            console.log(req);
+            res.send(200);
+        });
     }
 
     start() {
         this.express.listen(this.port, () => {
-            console.log(`GitHub Reddit Bot web server listening on port ${this.port}!`)
+            console.log(`GitHub Reddit Bot web server listening on port ${this.port}!`);
         });
     }
 
