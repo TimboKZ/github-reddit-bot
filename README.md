@@ -8,17 +8,26 @@ The dev instance of the bot is hosted on Heroku and can be accessed via [https:/
 
 # How it works
 
+> Coming soon.
+
 # Deploying the bot
 
-Clone the repository to your local machine and install all NPM dependencies:
+Clone the repository to your local machine, install all NPM dependencies and copy the config:
 
-```
+```shell
 git clone https://github.com/TimboKZ/github-reddit-bot.git
 cd github-reddit-bot
 npm install
+cp config.example.json config.json
 ```
 
-Copy and rename `config.example.json` to `config.json` and amend it as necessary. Once you're done, you can start the bot using `node index.js`. Keep in mind that your server URL will have to be publicly available for GitHub hooks to work. 
+Customise your `config.json` as necessary. Once you're done, you can start the bot:
+
+```shell
+node index.js
+```
+
+Keep in mind that your server URL must be accessible from the web for GitHub hooks to work. 
 
 # Reporting issues
 
