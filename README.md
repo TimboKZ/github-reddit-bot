@@ -1,5 +1,7 @@
 # GitHub Reddit Bot
 
+[![Build Status](https://travis-ci.org/TimboKZ/github-reddit-bot.svg?branch=master)](https://travis-ci.org/TimboKZ/github-reddit-bot)
+
 A bot that watches GitHub repositories for changes and automatically submits them to an appropriate subreddit.
 
 The dev instance of the bot is hosted on Heroku and can be accessed via [https://github-reddit-bot.herokuapp.com/](https://github-reddit-bot.herokuapp.com/).
