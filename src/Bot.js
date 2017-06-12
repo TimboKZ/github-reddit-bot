@@ -4,6 +4,8 @@
  * @license GPL-3.0
  */
 
+'use strict';
+
 const DB = require('./DB');
 const RedditClient = require('./RedditClient');
 const WebServer = require('./WebServer');

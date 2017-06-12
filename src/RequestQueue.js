@@ -6,7 +6,7 @@
 
 'use strict';
 
-class JobQueue {
+class RequestQueue {
 
     // TODO: Use secret to authorise users
 
@@ -14,4 +14,4 @@ class JobQueue {
 
 }
 
-module.exports = JobQueue;
+module.exports = RequestQueue;

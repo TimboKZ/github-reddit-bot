@@ -5,6 +5,8 @@
  * @license GPL-3.0
  */
 
+'use strict';
+
 // TODO: Load config from Heroku ENV variables
 const Package = require('./package.json');
 const Bot = require('./src/Bot');

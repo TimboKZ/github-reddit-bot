@@ -4,6 +4,8 @@
  * @license GPL-3.0
  */
 
+'use strict';
+
 const Sequelize = require('sequelize');
 
 class DB {
