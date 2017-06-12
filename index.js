@@ -5,7 +5,7 @@
  * @license GPL-3.0
  */
 
-const Config = require('./config.json');
+// TODO: Load config from Heroku ENV variables
 const Bot = require('./src/Bot');
 
 const PORT = process.env.PORT || 5000;
