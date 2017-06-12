@@ -42,12 +42,10 @@ class Bot {
             })
             .then((port) => {
                 console.log(`Web server is listening on ${port}.`);
+                console.log('GitHub Reddit Bot is up and running!');
             })
             .catch((error) => {
-                console.error(error);
-            })
-            .all(() => {
-                console.log('GitHub Reddit Bot is up and running!');
+                throw error;
             });
     }
 
