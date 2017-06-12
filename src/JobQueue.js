@@ -10,6 +10,8 @@ class JobQueue {
 
     // TODO: Use secret to authorise users
 
+    constructor() {}
+
 }
 
 module.exports = JobQueue;

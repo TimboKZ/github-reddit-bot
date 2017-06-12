@@ -10,6 +10,20 @@ class DB {
 
     constructor(dbUrl) {
         this.sequelize = new Sequelize(dbUrl);
+        this.jobQueue = this.sequelize.define('jobQueue', {
+            subreddit: {
+                type: Sequelize.DataTypes.STRING
+            },
+            title: {
+                type: Sequelize.DataTypes.STRING
+            },
+            text: {
+                type: Sequelize.DataTypes.STRING
+            },
+            completed: {
+                type: Sequelize.DataTypes.BOOLEAN
+            }
+        });
     }
 
     testConnection() {
