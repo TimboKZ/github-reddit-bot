@@ -7,22 +7,27 @@
 const DB = require('./DB');
 const RedditClient = require('./RedditClient');
 const WebServer = require('./WebServer');
-const Package = require('./../package.json');
 
 class Bot {
 
     /**
-     * @param {number} port
-     * @param {string} dbUrl
+     * @type {{port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
      */
-    constructor(port, dbUrl) {
-        this.db = new DB(dbUrl);
-        this.reddit = new RedditClient();
-        this.server = new WebServer(port);
+    constructor(config) {
+        this.config = config;
+        this.db = new DB(this.config.dbUrl);
+        this.reddit = new RedditClient(
+            this.config.clientId,
+            this.config.clientSecret,
+            this.config.username,
+            this.config.password,
+            this.config.userAgent
+        );
+        this.server = new WebServer(this.config.port);
     }
 
     start() {
-        console.log(`Starting GitHub Reddit Bot v${Package.version}...`);
+        console.log(`Starting ${this.config.userAgent}...`);
         this.db.testConnection()
             .catch((error) => {
                 console.error(`Could not establish connection to database: ${error}`);

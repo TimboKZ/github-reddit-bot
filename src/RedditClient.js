@@ -8,12 +8,13 @@ const snoowrap = require('snoowrap');
 
 class RedditClient {
 
-    constructor(userAgent, clientId, clientSecret, refreshToken) {
+    constructor(clientId, clientSecret, username, password, userAgent) {
         this.reddit = new snoowrap({
-            userAgent,
             clientId,
             clientSecret,
-            refreshToken
+            username,
+            password,
+            userAgent,
         });
     }
 
