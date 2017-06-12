@@ -73,7 +73,7 @@ class WebServer {
                 this.server = this.express.listen(this.port);
                 resolve(this.port);
             } catch(error) {
-                reject(this.port, error);
+                reject(error);
             }
         });
     }

@@ -4,6 +4,7 @@
  * @license GPL-3.0
  */
 
+const Promise = require('bluebird');
 const snoowrap = require('snoowrap');
 
 class RedditClient {
@@ -19,7 +20,11 @@ class RedditClient {
     }
 
     testConnection() {
-        return this.reddit.getInbox();
+        return new Promise((resolve, reject) => {
+            this.reddit.getInbox()
+                .then(() => resolve())
+                .catch(error => reject(error));
+        });
     }
 
     submitSelfPost(subreddit, title, text) {

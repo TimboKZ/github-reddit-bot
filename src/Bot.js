@@ -28,29 +28,23 @@ class Bot {
 
     start() {
         console.log(`Starting ${this.config.userAgent}...`);
+        console.log('Connecting to database...');
         this.db.testConnection()
-            .catch((error) => {
-                console.error('Could not establish connection to database!');
-                throw error;
-            })
             .then(() => {
                 console.log('Connected to database.');
+                console.log('Connecting to Reddit...');
                 return this.reddit.testConnection();
-            })
-            .catch((error) => {
-                console.error('Reddit client could not connect!');
-                throw error;
             })
             .then(() => {
                 console.log('Reddit client connected.');
+                console.log('Starting the web server...');
                 return this.server.start();
-            })
-            .catch((port, error) => {
-                console.error(`Could not start a web server on port ${port}!`);
-                throw error;
             })
             .then((port) => {
                 console.log(`Web server is listening on ${port}.`);
+            })
+            .catch((error) => {
+                console.error(error);
             })
             .all(() => {
                 console.log('GitHub Reddit Bot is up and running!');

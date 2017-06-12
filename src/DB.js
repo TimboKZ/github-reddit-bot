@@ -27,7 +27,7 @@ class DB {
     }
 
     testConnection() {
-        return this.sequelize.authenticate();
+        return this.sequelize.authenticate({logging: false});
     }
 
 }
