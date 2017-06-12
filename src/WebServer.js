@@ -8,6 +8,7 @@
 
 const path = require('path');
 const express = require('express');
+const Promise = require('bluebird');
 
 /**
  * @property {express.application} express
@@ -67,8 +68,13 @@ class WebServer {
     }
 
     start() {
-        this.server = this.express.listen(this.port, () => {
-            console.log(`GitHub Reddit Bot web server listening on port ${this.port}!`);
+        return new Promise((resolve, reject) => {
+            try {
+                this.server = this.express.listen(this.port);
+                resolve(this.port);
+            } catch(error) {
+                reject(this.port, error);
+            }
         });
     }
 
