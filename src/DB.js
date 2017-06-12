@@ -14,7 +14,8 @@ class DB {
         this.sequelize = new Sequelize(dbUrl);
         this.jobQueue = this.sequelize.define('jobQueue', {
             id: {
-                type: Sequelize.DataTypes.STRING
+                type: Sequelize.DataTypes.STRING,
+                primaryKey: true
             },
             subreddit: {
                 type: Sequelize.DataTypes.STRING
