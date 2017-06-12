@@ -12,7 +12,16 @@ class DB {
 
     constructor(dbUrl) {
         this.sequelize = new Sequelize(dbUrl);
-        this.jobQueue = this.sequelize.define('jobQueue', {
+
+        this.activeRepos = this.sequelize.define('activeRepos', {
+            repoName: {
+                type: Sequelize.DataTypes.STRING
+            },
+            subredditName: {
+                type: Sequelize.DataTypes.STRING
+            }
+        });
+        this.postQueue = this.sequelize.define('postQueue', {
             id: {
                 type: Sequelize.DataTypes.STRING,
                 primaryKey: true

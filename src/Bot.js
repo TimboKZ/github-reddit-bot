@@ -51,6 +51,7 @@ class Bot {
                 this.schedulePosterRoutine();
             })
             .then(() => {
+                console.log('Poster routine scheduled.');
                 console.log('GitHub Reddit Bot is up and running!');
             })
             .catch((error) => {
