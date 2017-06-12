@@ -10,7 +10,22 @@ class RequestQueue {
 
     // TODO: Use secret to authorise users
 
-    constructor() {}
+    // TODO: Clean up RequestQueue on bot restart/when users change settings
+
+    /**
+     * @param {DB} db
+     */
+    constructor(db) {
+        this.db = db;
+    }
+
+    addRequest() {
+
+    }
+
+    takeRequest() {
+
+    }
 
 }
 

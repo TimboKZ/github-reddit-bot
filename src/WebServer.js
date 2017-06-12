@@ -17,9 +17,12 @@ class WebServer {
 
     /**
      * @param {number} port
+     * @param {RequestQueue} queue
      */
-    constructor(port) {
+    constructor(port, queue) {
         this.port = port;
+        this.queue = queue;
+
         this.server = null;
         this.setup();
     }

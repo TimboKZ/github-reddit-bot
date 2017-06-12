@@ -13,6 +13,9 @@ class DB {
     constructor(dbUrl) {
         this.sequelize = new Sequelize(dbUrl);
         this.jobQueue = this.sequelize.define('jobQueue', {
+            id: {
+                type: Sequelize.DataTypes.STRING
+            },
             subreddit: {
                 type: Sequelize.DataTypes.STRING
             },
