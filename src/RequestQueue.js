@@ -19,8 +19,9 @@ class RequestQueue {
         this.db = db;
     }
 
-    addRequest() {
-
+    addRequest(deliveryId, eventType, signature, payload) {
+        console.log('Request received!');
+        console.log(payload);
     }
 
     takeRequest() {
