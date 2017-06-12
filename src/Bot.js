@@ -28,26 +28,26 @@ class Bot {
 
     start() {
         console.log(`Starting ${this.config.userAgent}...`);
-        let promise = this.db.testConnection()
+        this.db.testConnection()
             .catch((error) => {
-                console.error(`Could not establish connection to database: ${error}`);
-                promise.break();
+                console.error('Could not establish connection to database!');
+                throw error;
             })
             .then(() => {
                 console.log('Connected to database.');
                 return this.reddit.testConnection();
             })
             .catch((error) => {
-                console.error(`Reddit client could not connect: ${error}`);
-                promise.break();
+                console.error('Reddit client could not connect!');
+                throw error;
             })
             .then(() => {
                 console.log('Reddit client connected.');
                 return this.server.start();
             })
             .catch((port, error) => {
-                console.error(`Could not start a web server on port ${port}: ${error}`);
-                promise.break();
+                console.error(`Could not start a web server on port ${port}!`);
+                throw error;
             })
             .then((port) => {
                 console.log(`Web server is listening on ${port}.`);
