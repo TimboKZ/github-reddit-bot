@@ -16,7 +16,7 @@ const config = {
     clientSecret: process.env.CLIENT_SECRET,
     username: process.env.BOT_USERNAME,
     password: process.env.BOT_PASSWORD,
-    userAgent: `GitHub Reddit Bot v${Package.version}`
+    userAgent: `node:github-reddit-bot:v${Package.version} (by /u/Timbo_KZ)`
 };
 
 let bot = new Bot(config);
