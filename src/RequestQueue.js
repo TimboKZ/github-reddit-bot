@@ -43,7 +43,7 @@ class RequestQueue {
                 return this.db.postQueue.create({
                     id: request.deliveryId,
                     subreddit: mapping.get('subredditName'),
-                    title: `${request.payload.name}: ${request.payload.eventType} (#${request.deliveryId})`,
+                    title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
                     text: '```\n' + JSON.stringify(request.payload) + '\n```'
                 });
             })
