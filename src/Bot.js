@@ -70,7 +70,7 @@ class Bot {
     }
 
     schedulePosterRoutine() {
-        const oneMinute = 60 * 1000;
+        const oneMinute = 20 * 1000; // TODO: Change this to actual 1 minute, 60 * 1000
         setInterval(() => {
             this.reddit.processQueue();
         }, oneMinute);

@@ -33,6 +33,7 @@ class RedditClient {
     processQueue() {
         this.queue.getIncompleteRequests()
             .then((incompleteRequests) => {
+                console.log(`Processing ${incompleteRequests.count} incomplete requests...`);
                 for (let i = 0; i < incompleteRequests; i++) {
                     let request = incompleteRequests[i];
                     this.submitSelfPost(
