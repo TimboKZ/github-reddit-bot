@@ -75,7 +75,7 @@ class RequestQueue {
         return this.db.postQueue
             .findAll({
                 where: {
-                    complete: false
+                    completed: false
                 }
             });
     }
