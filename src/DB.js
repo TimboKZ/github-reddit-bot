@@ -33,7 +33,7 @@ class DB {
                 type: Sequelize.DataTypes.STRING
             },
             text: {
-                type: Sequelize.DataTypes.STRING
+                type: Sequelize.DataTypes.TEXT
             },
             completed: {
                 type: Sequelize.DataTypes.BOOLEAN,
