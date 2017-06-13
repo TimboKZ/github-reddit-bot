@@ -10,6 +10,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const Promise = require('bluebird');
+const {Request} = require('./RequestQueue');
 
 /**
  * @property {express.application} express
@@ -50,7 +51,7 @@ class WebServer {
 
         if (WebServer.validateRequest(userAgent, eventType, deliveryID)) {
             console.log(`Accepted delivery #${deliveryID}, adding to request queue...`);
-            this.queue.addRequest(deliveryID, eventType, signature, req.body);
+            this.queue.add(new Request(deliveryID, eventType, signature, req.body));
             res.sendStatus(200);
         } else {
             res.sendStatus(400);
@@ -76,7 +77,7 @@ class WebServer {
             try {
                 this.server = this.express.listen(this.port);
                 resolve(this.port);
-            } catch(error) {
+            } catch (error) {
                 reject(error);
             }
         });

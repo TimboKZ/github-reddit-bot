@@ -29,6 +29,10 @@ class RedditClient {
         });
     }
 
+    processQueue() {
+
+    }
+
     submitSelfPost(subreddit, title, text) {
         // TODO: Add toggleable bot signature
         return this.reddit

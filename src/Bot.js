@@ -7,7 +7,7 @@
 'use strict';
 
 const DB = require('./DB');
-const RequestQueue = require('./RequestQueue');
+const {RequestQueue} = require('./RequestQueue');
 const RedditClient = require('./RedditClient');
 const WebServer = require('./WebServer');
 
@@ -37,6 +37,14 @@ class Bot {
         this.db.testConnection()
             .then(() => {
                 console.log('Connected to database.');
+
+                this.db.activeRepos.sync({force: true}).then(() => {
+                    return this.db.activeRepos.create({
+                        repoName: 'TimboKZ/github-reddit-bot',
+                        subredditName: 'GithubRedditBot'
+                    });
+                });
+
                 console.log('Connecting to Reddit...');
                 return this.reddit.testConnection();
             })

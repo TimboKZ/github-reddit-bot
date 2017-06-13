@@ -6,6 +6,21 @@
 
 'use strict';
 
+class Request {
+    /**
+     * @param {string} deliveryId
+     * @param {string} eventType
+     * @param {string} signature
+     * @param {object} payload
+     */
+    constructor(deliveryId, eventType, signature, payload) {
+        this.deliveryId = deliveryId;
+        this.eventType = eventType;
+        this.signature = signature;
+        this.payload = payload;
+    }
+}
+
 class RequestQueue {
 
     // TODO: Use secret to authorise users
@@ -19,15 +34,47 @@ class RequestQueue {
         this.db = db;
     }
 
-    addRequest(deliveryId, eventType, signature, payload) {
-        console.log('Request received!');
-        console.log(payload);
+    /**
+     * @param {Request} request
+     */
+    add(request) {
+        this.findRepoToSubMapping(request)
+            .then(mapping => {
+                return this.db.postQueue.create({
+                    id: request.deliveryId,
+                    subreddit: mapping.subredditName,
+                    title: `${request.payload.name}: ${request.payload.eventType} (#${request.deliveryId})`,
+                    text: '```\n' + JSON.stringify(request.payload) + '\n```'
+                });
+            })
+            .then(() => {
+                console.log(`Delivery #${request.deliveryId} added to post queue!`)
+            })
+            .catch((error) => {
+                console.error(`Couldn't add delivery #${request.deliveryId} to queue!`);
+                console.error(error.message);
+                console.error(error.stack);
+            });
     }
 
-    takeRequest() {
+    /**
+     * @param {Request} request
+     */
+    findRepoToSubMapping(request) {
+        this.db.sequelize
+            .findOne({
+                where: {
+                    repoName: {
+                        $iLike: request.payload.name
+                    }
+                }
+            })
+    }
+
+    getIncompleteRequests() {
 
     }
 
 }
 
-module.exports = RequestQueue;
+module.exports = {Request, RequestQueue};
