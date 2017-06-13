@@ -33,9 +33,8 @@ class RedditClient {
     processQueue() {
         this.queue.getIncompleteRequests()
             .then((incompleteRequests) => {
-                console.log(`Processing ${incompleteRequests.count} incomplete requests...`);
-                for (let i = 0; i < incompleteRequests; i++) {
-                    let request = incompleteRequests[i];
+                console.log(`Processing ${incompleteRequests.length} incomplete requests...`);
+                incompleteRequests.forEach(request => {
                     this.submitSelfPost(
                         request.get('subreddit'),
                         request.get('title'),
@@ -49,7 +48,7 @@ class RedditClient {
                         console.error(error.message);
                         console.error(error.stack);
                     });
-                }
+                });
             })
             .catch((error) => {
                 console.error('Could not fetch incomplete requests!');
