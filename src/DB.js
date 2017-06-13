@@ -36,7 +36,8 @@ class DB {
                 type: Sequelize.DataTypes.STRING
             },
             completed: {
-                type: Sequelize.DataTypes.BOOLEAN
+                type: Sequelize.DataTypes.BOOLEAN,
+                defaultValue: false
             }
         });
     }
