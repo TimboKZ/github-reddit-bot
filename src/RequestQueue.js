@@ -61,7 +61,7 @@ class RequestQueue {
      * @param {Request} request
      */
     findRepoToSubMapping(request) {
-        return this.db.sequelize.activeRepos
+        return this.db.activeRepos
             .findOne({
                 where: {
                     repoName: {
@@ -72,7 +72,7 @@ class RequestQueue {
     }
 
     getIncompleteRequests() {
-        return this.db.sequelize.postQueue
+        return this.db.postQueue
             .findAll({
                 where: {
                     complete: false
