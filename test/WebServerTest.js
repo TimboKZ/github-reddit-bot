@@ -6,6 +6,7 @@
 
 'use strict';
 
+const Promise = require('bluebird');
 const request = require('supertest');
 const WebServer = require('../src/WebServer');
 
@@ -16,7 +17,14 @@ describe('WebServer', () => {
     let server;
 
     before(() => {
-        server = new WebServer(PORT);
+        let queueMock = {
+            add: () => {
+                new Promise((resolve) => {
+                    resolve();
+                });
+            }
+        };
+        server = new WebServer(PORT, queueMock);
         server.start();
     });
 
