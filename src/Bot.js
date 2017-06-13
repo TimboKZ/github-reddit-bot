@@ -45,6 +45,7 @@ class Bot {
                         subredditName: 'GithubRedditBot'
                     });
                 });
+                this.db.postQueue.sync({force: true});
 
                 console.log('Connecting to Reddit...');
                 return this.reddit.testConnection();

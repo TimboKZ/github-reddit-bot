@@ -11,7 +11,7 @@ const Sequelize = require('sequelize');
 class DB {
 
     constructor(dbUrl) {
-        this.sequelize = new Sequelize(dbUrl);
+        this.sequelize = new Sequelize(dbUrl, {logging: false});
 
         this.activeRepos = this.sequelize.define('activeRepos', {
             repoName: {
@@ -43,7 +43,7 @@ class DB {
     }
 
     testConnection() {
-        return this.sequelize.authenticate({logging: false});
+        return this.sequelize.authenticate();
     }
 
 }
