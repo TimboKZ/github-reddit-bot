@@ -44,7 +44,7 @@ class RequestQueue {
                     id: request.deliveryId,
                     subreddit: mapping.get('subredditName'),
                     title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
-                    text: '```\n' + JSON.stringify(request.payload, null, 4) + '\n```'
+                    text: JSON.stringify(request.payload, null, 4)
                 });
             })
             .then(() => {
