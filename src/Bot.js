@@ -26,7 +26,8 @@ class Bot {
             this.config.clientSecret,
             this.config.username,
             this.config.password,
-            this.config.userAgent
+            this.config.userAgent,
+            this.queue
         );
         this.server = new WebServer(this.config.port, this.queue);
     }
@@ -70,12 +71,8 @@ class Bot {
     schedulePosterRoutine() {
         const oneMinute = 60 * 1000;
         setInterval(() => {
-            this.posterRoutine();
+            this.reddit.processQueue();
         }, oneMinute);
-    }
-
-    posterRoutine() {
-
     }
 
 }

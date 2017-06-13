@@ -42,13 +42,13 @@ class RequestQueue {
             .then(mapping => {
                 return this.db.postQueue.create({
                     id: request.deliveryId,
-                    subreddit: mapping.subredditName,
+                    subreddit: mapping.get('subredditName'),
                     title: `${request.payload.name}: ${request.payload.eventType} (#${request.deliveryId})`,
                     text: '```\n' + JSON.stringify(request.payload) + '\n```'
                 });
             })
             .then(() => {
-                console.log(`Delivery #${request.deliveryId} added to post queue!`)
+                console.log(`Delivery #${request.deliveryId} added to post queue!`);
             })
             .catch((error) => {
                 console.error(`Couldn't add delivery #${request.deliveryId} to queue!`);
@@ -61,18 +61,29 @@ class RequestQueue {
      * @param {Request} request
      */
     findRepoToSubMapping(request) {
-        this.db.sequelize
+        return this.db.sequelize.activeRepos
             .findOne({
                 where: {
                     repoName: {
                         $iLike: request.payload.name
                     }
                 }
-            })
+            });
     }
 
     getIncompleteRequests() {
+        return this.db.sequelize.postQueue
+            .findAll({
+                where: {
+                    complete: false
+                }
+            });
+    }
 
+    completeRequest(request) {
+        return request.update({
+            completed: true
+        });
     }
 
 }
