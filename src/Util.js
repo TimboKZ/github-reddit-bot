@@ -20,7 +20,7 @@ class Util {
         console.error(error.stack);
         if (res) {
             res.status(status);
-            res.send(message + error.message);
+            res.send(`${message}: ${error.message}`);
         }
     }
 

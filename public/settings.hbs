@@ -16,9 +16,9 @@
         </h2>
         <ol>
             <li v-for="sub in moddedSubs">
-                \{{ sub.subreddit }}
+                \{{ sub.subreddit }} <button v-on:click="deleteSub(sub.id)">Delete</button>
             </li>
-            <li><input v-model="subInput" placeholder="edit me">
+            <li><input v-model="subInput" placeholder="Enter a subreddit name">
                 <button v-on:click="addSub">Add</button>
             </li>
         </ol>
@@ -68,6 +68,17 @@
             addSub: function () {
                 var self = this;
                 axios.put('/settings/modded-subs', {subreddit: self.subInput})
+                        .then(function() {
+                            self.subInput = '';
+                            self.fetchModdedSubs()
+                        })
+                        .catch(function(error) {
+                            console.error(error.message);
+                        });
+            },
+            deleteSub: function (id) {
+                var self = this;
+                axios.delete('/settings/modded-subs', {id: id})
                         .then(function() {
                             self.fetchModdedSubs()
                         })

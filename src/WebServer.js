@@ -103,7 +103,7 @@ class WebServer {
                 return res.sendStatus(401);
             }
             let subreddit = req.body.subreddit;
-            if(!subreddit || subreddit === '') {
+            if (!subreddit || subreddit === '') {
                 res.status(400);
                 return res.send(`Bad subreddit string: ${subreddit}`);
             }
@@ -114,7 +114,7 @@ class WebServer {
                     return RedditClient.hasMod(subreddit, req.user.name);
                 })
                 .then(isMod => {
-                    if(!isMod) throw new Error(`You're not a mod of ${subreddit}!`);
+                    if (!isMod) throw new Error(`You're not a mod of ${subreddit}!`);
                     return this.db.moddedSubreddits.create({
                         user: req.user.name,
                         subreddit: subreddit,
@@ -127,6 +127,20 @@ class WebServer {
             if (!req.user) {
                 return res.sendStatus(401);
             }
+            let id = req.body.id;
+            if (!id || id === '') {
+                res.status(400);
+                return res.send(`Bad ID string: ${id}`);
+            }
+
+            this.db.moddedSubreddits.destroy({
+                where: {
+                    id,
+                    user: req.user.name,
+                },
+            })
+                .then(() => res.sendStatus(200))
+                .catch(error => Util.logError(error, 'Could not delete a modded subreddit', res));
         });
         this.express.get('/settings/modded-subs', (req, res) => {
             if (!req.user) {
