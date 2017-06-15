@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>GitHub Reddit Bot</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
@@ -22,6 +24,8 @@
                 <button v-on:click="addSub">Add</button>
             </li>
         </ol>
+        <p>Adding a subreddit here will allow you to see all mappings associated with this subreddit. A check will be performed to confirm that you are indeed a moderator of the subreddit you've entered.</p>
+
         <h2>Your mappings:
             <button v-on:click="fetchMappings">Refresh</button>
         </h2>
