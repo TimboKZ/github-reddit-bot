@@ -9,6 +9,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const crypto = require('crypto');
@@ -60,6 +61,7 @@ class WebServer {
         this.express.engine('hbs', exphbs());
         this.express.set('view engine', 'hbs');
         this.express.use(bodyParser.json());
+        this.express.use(cookieParser());
         this.express.use(session({
             secret: 'keyboard cat',
             resave: false,
@@ -142,7 +144,7 @@ class WebServer {
             }
             else {
                 res.status(403);
-                res.send(`'Invalid session hash - please try again.\n${req.query.state}\n${req.session.state}`);
+                res.send(`Invalid session hash - please try again.\n${req.query.state}\n${req.session.state}`);
             }
         });
         this.express.get('/logout', (req, res) => {
