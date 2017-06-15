@@ -102,22 +102,22 @@ class WebServer {
             if (!req.user) {
                 return res.sendStatus(401);
             }
-            console.log(req.query);
-            if(!req.query.subreddit || req.query.subreddit === '') {
+            let subreddit = req.body.subreddit;
+            if(!subreddit || subreddit === '') {
                 res.status(400);
-                return res.send(`Bad subreddit string: ${req.query.subreddit}`);
+                return res.send(`Bad subreddit string: ${subreddit}`);
             }
 
-            this.reddit.subredditExists(req.query.subreddit)
+            this.reddit.subredditExists(subreddit)
                 .then(exists => {
-                    if (!exists) throw new Error(`Subreddit ${req.query.subreddit} does not exist!`);
-                    return RedditClient.hasMod(req.query.subreddit, req.user.name);
+                    if (!exists) throw new Error(`Subreddit ${subreddit} does not exist!`);
+                    return RedditClient.hasMod(subreddit, req.user.name);
                 })
                 .then(isMod => {
-                    if(!isMod) throw new Error(`You're not a mod of ${req.query.subreddit}!`);
+                    if(!isMod) throw new Error(`You're not a mod of ${subreddit}!`);
                     return this.db.moddedSubreddits.create({
                         user: req.user.name,
-                        subreddit: req.query.subreddit,
+                        subreddit: subreddit,
                     });
                 })
                 .then(() => res.sendStatus(200))
