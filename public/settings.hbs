@@ -29,7 +29,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr is="mapping-item" v-for="mapping in mappings" v-bind:mapping="mapping"></tr>
+            <tr is="mapping-item" v-for="mapping in mappings" :mapping="mapping"></tr>
             </tbody>
         </table>
     </div>
@@ -37,7 +37,8 @@
 
 <script>
     Vue.component('mapping-item', {
-        template: '#mapping-item-template'
+        template: '#mapping-item-template',
+        props: ['mapping'],
     });
     new Vue({
         el: '#app',
