@@ -31,6 +31,12 @@ class WebServer {
     }
 
     setup() {
+        passport.serializeUser(function(user, done) {
+            done(null, user);
+        });
+        passport.deserializeUser(function(obj, done) {
+            done(null, obj);
+        });
         passport.use(new RedditStrategy(
             {
                 clientID: this.config.clientId,
@@ -44,6 +50,7 @@ class WebServer {
         this.express = express();
         this.express.use(bodyParser.json());
         this.express.use(passport.initialize());
+        this.express.use(passport.session());
         this.express.get('/', (req, res) => {
             let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
             res.sendFile(indexPath);
