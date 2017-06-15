@@ -42,13 +42,13 @@
             moddedSubs: [],
             mappings: [],
         },
-        ready: function () {
+        mounted: function () {
             this.fetchModdedSubs();
             this.fetchMappings();
         },
         methods: {
             fetchModdedSubs: function () {
-
+                console.log('123');
                 var self = this;
                 var xhr = new XMLHttpRequest();
                 xhr.open('{{baseUrl}}/settings/modded-subs');
@@ -58,6 +58,7 @@
                 xhr.send();
             },
             fetchMappings: function () {
+                console.log('321');
                 var self = this;
                 var xhr = new XMLHttpRequest();
                 xhr.open('{{baseUrl}}/settings/existing-mappings');
