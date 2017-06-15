@@ -40,15 +40,16 @@ class RedditClient {
                         request.get('subreddit'),
                         request.get('title'),
                         request.get('text')
-                    ).then(() => {
-                        return this.queue.completeRequest(request);
-                    }).then(() => {
-                        console.log(`Request #${request.get('id')} was completed.`);
-                    }).catch((error) => {
-                        console.error('Could not complete request by posting on reddit!');
-                        console.error(error.message);
-                        console.error(error.stack);
-                    });
+                    )
+                        .then(() => this.queue.completeRequest(request))
+                        .then(() => {
+                            console.log(`Request #${request.get('id')} was completed.`);
+                        })
+                        .catch((error) => {
+                            console.error('Could not complete request by posting on reddit!');
+                            console.error(error.message);
+                            console.error(error.stack);
+                        });
                 });
             })
             .catch((error) => {

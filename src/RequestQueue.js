@@ -39,14 +39,12 @@ class RequestQueue {
      */
     add(request) {
         this.findRepoToSubMapping(request)
-            .then(mapping => {
-                return this.db.postQueue.create({
-                    id: request.deliveryId,
-                    subreddit: mapping.get('subredditName'),
-                    title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
-                    text: JSON.stringify(request.payload, null, 4)
-                });
-            })
+            .then(mapping => this.db.postQueue.create({
+                id: request.deliveryId,
+                subreddit: mapping.get('subredditName'),
+                title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
+                text: JSON.stringify(request.payload, null, 4)
+            }))
             .then(() => {
                 console.log(`Delivery #${request.deliveryId} added to post queue!`);
             })

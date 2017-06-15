@@ -56,14 +56,16 @@ class WebServer {
         this.express.get('/', (req, res) => {
             let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
             if (req.user) {
-                res.redirect('/settings');
-            } else {
-                res.sendFile(indexPath);
+                return res.redirect('/settings');
             }
+            return res.sendFile(indexPath);
         });
         this.express.all('/hooks', this.processHook.bind(this));
-        this.express.settings('/settings', (req, res) => {
-            res.send('Hello!' + JSON.stringify(req.user));
+        this.express.get('/settings', (req, res) => {
+            if (!req.user) {
+                return res.redirect('/');
+            }
+            res.send(`Hello! ${JSON.stringify(req.user)}`);
         });
         this.express.get('/auth/reddit', (req, res, next) => {
             req.session.state = crypto.randomBytes(32).toString('hex');

@@ -36,6 +36,7 @@
       "always"
     ],
     "no-console": "off",
+    "prefer-template": "error",
     "arrow-body-style": ["error", "as-needed"]
   }
 }

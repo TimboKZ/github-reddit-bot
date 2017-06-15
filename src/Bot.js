@@ -39,12 +39,10 @@ class Bot {
             .then(() => {
                 console.log('Connected to database.');
 
-                this.db.activeRepos.sync({force: true}).then(() => {
-                    return this.db.activeRepos.create({
-                        repoName: 'TimboKZ/github-reddit-bot',
-                        subredditName: 'GithubRedditBot'
-                    });
-                });
+                this.db.activeRepos.sync({force: true}).then(() => this.db.activeRepos.create({
+                    repoName: 'TimboKZ/github-reddit-bot',
+                    subredditName: 'GithubRedditBot'
+                }));
                 this.db.postQueue.sync({force: true});
 
                 console.log('Connecting to Reddit...');
