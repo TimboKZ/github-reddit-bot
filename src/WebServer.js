@@ -123,11 +123,11 @@ class WebServer {
                 .then(() => res.sendStatus(200))
                 .catch(error => Util.logError(error, 'Could not add a modded sub for user', res));
         });
-        this.express.delete('/settings/modded-subs', (req, res) => {
+        this.express.delete('/settings/modded-subs/:id', (req, res) => {
             if (!req.user) {
                 return res.sendStatus(401);
             }
-            let id = req.body.id;
+            let id = req.params.id;
             if (!id || id === '') {
                 res.status(400);
                 return res.send(`Bad ID string: ${id}`);

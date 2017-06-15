@@ -78,7 +78,7 @@
             },
             deleteSub: function (id) {
                 var self = this;
-                axios.delete('/settings/modded-subs', {id: id})
+                axios.delete('/settings/modded-subs/' + id)
                         .then(function() {
                             self.fetchModdedSubs()
                         })
