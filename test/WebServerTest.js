@@ -37,7 +37,7 @@ describe('WebServer', () => {
     });
 
     describe('root URL (/)', () => {
-        it('should return index.html', (done) => {
+        it('should return index.hbs', (done) => {
             request(server.express)
                 .get('/')
                 .expect('Content-Type', /text\/html/)

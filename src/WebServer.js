@@ -61,11 +61,13 @@ class WebServer {
         this.express.use(passport.initialize());
         this.express.use(passport.session());
         this.express.get('/', (req, res) => {
-            let indexPath = path.join(PUBLIC_PATH, 'index.html');
+            let indexPath = path.join(PUBLIC_PATH, 'index.hbs');
             if (req.user) {
                 return res.redirect('/settings');
             }
-            return res.sendFile(indexPath);
+            res.render(indexPath, {
+                baseUrl: this.config.url,
+            });
         });
         this.express.all('/hooks', this.processHook.bind(this));
         this.express.get('/settings', (req, res) => {
@@ -74,6 +76,7 @@ class WebServer {
             }
             let settingsPath = path.join(PUBLIC_PATH, 'settings.hbs');
             res.render(settingsPath, {
+                baseUrl: this.config.url,
                 user: req.user,
             });
         });
