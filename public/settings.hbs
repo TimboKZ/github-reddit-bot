@@ -14,9 +14,12 @@
 <div class="container">
     <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
     <div id="app">
-        <h2>Subreddits you moderate:
+        <h2>Subreddits you moderate
             <button class="btn btn-default btn-sm" v-on:click="fetchModdedSubs">Refresh</button>
         </h2>
+
+        <p>Adding a subreddit here will allow you to see all mappings associated with this subreddit. A check will be performed to confirm that you are indeed a moderator of the subreddit you've entered.</p>
+
         <ol>
             <li v-for="sub in moddedSubs">
                 \{{ sub.subreddit }} <button class="btn btn-danger" v-on:click="deleteSub(sub.id)">Delete</button>
@@ -25,11 +28,15 @@
                 <button class="btn btn-primary" v-on:click="addSub">Add</button>
             </li>
         </ol>
-        <p>Adding a subreddit here will allow you to see all mappings associated with this subreddit. A check will be performed to confirm that you are indeed a moderator of the subreddit you've entered.</p>
 
-        <h2>Your mappings:
+        <hr>
+
+        <h2>Your mappings
             <button class="btn btn-default btn-sm" v-on:click="fetchMappings">Refresh</button>
         </h2>
+
+        <p>To instruct the bot to begin posting repository updates in your subreddit, add the repository and target subreddit below. Then, setup a <a href="https://developer.github.com/webhooks/creating/">webhook</a> in your repository pointing at <code>https://github-reddit-bot.herokuapp.com/hooks</code>, set content type to <code>application/json</code> and secret to key seen below.</p>
+
         <table class="table table-striped table-responsive">
             <thead>
             <tr>
@@ -42,6 +49,17 @@
             </thead>
             <tbody>
             <tr is="mapping-item" v-for="mapping in mappings" :mapping="mapping"></tr>
+            <tr>
+                <td><input v-model="mappingInput.repo" placeholder="Enter a repository name"></td>
+                <td>
+                    <select v-model="mappingInput.subreddit" class="form-control">
+                        <option v-for="sub in moddedSubs">\{{sub.subreddit}}</option>
+                    </select>
+                </td>
+                <td></td>
+                <td></td>
+                <td><button class="btn btn-primary" v-on:click="addMapping">Add</button></td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -58,6 +76,10 @@
             moddedSubs: [],
             subInput: '',
             mappings: [],
+            mappingInput: {
+                repo: '',
+                subreddit: '',
+            }
         },
         created: function () {
             this.fetchModdedSubs();
@@ -105,9 +127,9 @@
     <tr>
         <td>\{{ mapping.repo }}</td>
         <td>\{{ mapping.subreddit }}</td>
-        <td>\{{ mapping.author }}</td>
-        <td>\{{ mapping.secret }}</td>
-        <td>Button</td>
+        <td>\{{ mapping.author }}</></td>
+        <td><code>\{{ mapping.secret }}</code></td>
+        <td><button class="btn btn-danger" v-on:click="deleteMapping(mapping.id)">Delete</button></td>
     </tr>
 </script>
 
