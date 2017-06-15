@@ -8,6 +8,8 @@
 
 const Promise = require('bluebird');
 const snoowrap = require('snoowrap');
+const fetch = require('node-fetch');
+const _ = require('lodash');
 
 class RedditClient {
 
@@ -66,8 +68,41 @@ class RedditClient {
             .submitSelfpost({
                 title,
                 text,
-                sendReplies: false
+                sendReplies: false,
             });
+    }
+
+    /**
+     * @param {string} subName
+     * @param {string} username
+     */
+    static hasMod(subName, username) {
+        return new Promise((resolve, reject) => {
+            RedditClient.getSubMods(subName)
+                .then(modNames => {
+                    let lowerCaseNames = _.map(modNames, name => name.toLowerCase());
+                    resolve(lowerCaseNames.includes(username.toLowerCase()));
+                })
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     * @param {string} subName
+     * @return Promise<string[]>
+     */
+    static getSubMods(subName) {
+        let modInfoUrl = `https://reddit.com/r/${subName}/about/moderators.json`;
+        return new Promise((resolve, reject) => {
+            fetch(modInfoUrl)
+                .then(res => res.json())
+                .then(json => {
+                    let mods = json.data.children;
+                    let modNames = _.flatMap(mods, mod => mod.name);
+                    resolve(modNames);
+                })
+                .catch(error => reject(error));
+        });
     }
 
 }

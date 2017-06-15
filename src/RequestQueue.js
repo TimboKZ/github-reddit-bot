@@ -43,7 +43,7 @@ class RequestQueue {
                 id: request.deliveryId,
                 subreddit: mapping.get('subredditName'),
                 title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
-                text: JSON.stringify(request.payload, null, 4)
+                text: JSON.stringify(request.payload, null, 4),
             }))
             .then(() => {
                 console.log(`Delivery #${request.deliveryId} added to post queue!`);
@@ -63,9 +63,9 @@ class RequestQueue {
             .findOne({
                 where: {
                     repoName: {
-                        $iLike: request.payload.name
-                    }
-                }
+                        $iLike: request.payload.name,
+                    },
+                },
             });
     }
 
@@ -73,14 +73,14 @@ class RequestQueue {
         return this.db.postQueue
             .findAll({
                 where: {
-                    completed: false
-                }
+                    completed: false,
+                },
             });
     }
 
     completeRequest(request) {
         return request.update({
-            completed: true
+            completed: true,
         });
     }
 

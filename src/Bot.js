@@ -29,7 +29,7 @@ class Bot {
             this.config.userAgent,
             this.queue
         );
-        this.server = new WebServer(this.config, this.reddit, this.queue);
+        this.server = new WebServer(this.config, this.reddit, this.db, this.queue);
     }
 
     start() {
@@ -41,7 +41,9 @@ class Bot {
 
                 this.db.activeRepos.sync({force: true}).then(() => this.db.activeRepos.create({
                     repoName: 'TimboKZ/github-reddit-bot',
-                    subredditName: 'GithubRedditBot'
+                    subredditName: 'GithubRedditBot',
+                    author: 'Timbo_KZ',
+                    secret: 'HelloWorld123',
                 }));
                 this.db.postQueue.sync({force: true});
 

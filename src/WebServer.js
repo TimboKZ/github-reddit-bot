@@ -23,12 +23,14 @@ class WebServer {
 
     /**
      * @param {{url: string, port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
-     * @param reddit
+     * @param {RedditClient} reddit
+     * @param {DB} db
      * @param {RequestQueue} queue
      */
-    constructor(config, reddit, queue) {
+    constructor(config, reddit, db, queue) {
         this.config = config;
         this.port = this.config.port;
+        this.db = db;
         this.reddit = reddit;
         this.queue = queue;
 
@@ -57,9 +59,21 @@ class WebServer {
         this.express.engine('hbs', exphbs());
         this.express.set('view engine', 'hbs');
         this.express.use(bodyParser.json());
-        this.express.use(session({secret: this.config.userAgent}));
+        this.express.use(session({
+            secret: 'keyboard cat',
+            resave: false,
+            saveUninitialized: true,
+            cookie: { secure: true },
+        }));
         this.express.use(passport.initialize());
         this.express.use(passport.session());
+
+        this.setupRoutes();
+        this.setupAuth();
+    }
+
+    setupRoutes() {
+        this.express.all('/hooks', this.processHook.bind(this));
         this.express.get('/', (req, res) => {
             let indexPath = path.join(PUBLIC_PATH, 'index.hbs');
             if (req.user) {
@@ -69,7 +83,6 @@ class WebServer {
                 baseUrl: this.config.url,
             });
         });
-        this.express.all('/hooks', this.processHook.bind(this));
         this.express.get('/settings', (req, res) => {
             if (!req.user) {
                 return res.redirect('/');
@@ -80,6 +93,15 @@ class WebServer {
                 user: req.user,
             });
         });
+        this.express.get('/settings/existing-mappings', (req, res) => {
+            if(!req.user) {
+                return res.sendStatus(401);
+            }
+            this.reddit.getModdedSubs(req.user.name);
+        });
+    }
+
+    setupAuth() {
         this.express.get('/auth/reddit', (req, res, next) => {
             req.session.state = crypto.randomBytes(32).toString('hex');
             passport.authenticate('reddit', {

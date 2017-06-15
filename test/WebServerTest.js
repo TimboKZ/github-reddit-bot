@@ -13,7 +13,7 @@ const WebServer = require('../src/WebServer');
 const config = {
     clientId: '123',
     clientSecret: '123',
-    port: 5000
+    port: 5000,
 };
 
 describe('WebServer', () => {
@@ -26,9 +26,9 @@ describe('WebServer', () => {
                 new Promise((resolve) => {
                     resolve();
                 });
-            }
+            },
         };
-        server = new WebServer(config, queueMock);
+        server = new WebServer(config, {}, {}, queueMock);
         server.start();
     });
 

@@ -15,30 +15,36 @@ class DB {
 
         this.activeRepos = this.sequelize.define('activeRepos', {
             repoName: {
-                type: Sequelize.DataTypes.STRING
+                type: Sequelize.DataTypes.STRING,
             },
             subredditName: {
-                type: Sequelize.DataTypes.STRING
-            }
+                type: Sequelize.DataTypes.STRING,
+            },
+            author: {
+                type: Sequelize.DataTypes.STRING,
+            },
+            secret: {
+                type: Sequelize.DataTypes.STRING,
+            },
         });
         this.postQueue = this.sequelize.define('postQueue', {
             id: {
                 type: Sequelize.DataTypes.STRING,
-                primaryKey: true
+                primaryKey: true,
             },
             subreddit: {
-                type: Sequelize.DataTypes.STRING
+                type: Sequelize.DataTypes.STRING,
             },
             title: {
-                type: Sequelize.DataTypes.STRING
+                type: Sequelize.DataTypes.STRING,
             },
             text: {
-                type: Sequelize.DataTypes.TEXT
+                type: Sequelize.DataTypes.TEXT,
             },
             completed: {
                 type: Sequelize.DataTypes.BOOLEAN,
-                defaultValue: false
-            }
+                defaultValue: false,
+            },
         });
     }
 
