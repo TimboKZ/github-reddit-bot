@@ -13,6 +13,14 @@ class DB {
     constructor(dbUrl) {
         this.sequelize = new Sequelize(dbUrl, {logging: false});
 
+        this.moddedSubreddits = this.sequelize.define('moddedSub', {
+            user: {
+                type: Sequelize.DataTypes.STRING,
+            },
+            subreddit: {
+                type: Sequelize.DataTypes.STRING,
+            },
+        });
         this.activeRepos = this.sequelize.define('activeRepos', {
             repoName: {
                 type: Sequelize.DataTypes.STRING,

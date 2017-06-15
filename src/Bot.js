@@ -39,6 +39,7 @@ class Bot {
             .then(() => {
                 console.log('Connected to database.');
 
+                this.db.moddedSubreddits.sync();
                 this.db.activeRepos.sync({force: true}).then(() => this.db.activeRepos.create({
                     repoName: 'TimboKZ/github-reddit-bot',
                     subredditName: 'GithubRedditBot',

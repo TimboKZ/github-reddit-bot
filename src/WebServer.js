@@ -96,6 +96,53 @@ class WebServer {
                 user: req.user,
             });
         });
+        this.express.put('/settings/modded-subs', (req, res) => {
+            if (!req.user) {
+                return res.sendStatus(401);
+            }
+            if(!req.query.subreddit) {
+                return res.sendStatus(400);
+            }
+            this.db.moddedSubreddits.create({
+                user: req.user.name,
+
+            })
+                .then(() => res.sendStatus(200))
+                .catch(error => {
+                    console.error('Could not add a modded sub for user:');
+                    console.error(error.message);
+                    console.error(error.stack);
+                    res.sendStatus(500);
+                });
+        });
+        this.express.delete('/settings/modded-subs', (req, res) => {
+            if (!req.user) {
+                return res.sendStatus(401);
+            }
+        });
+        this.express.get('/settings/modded-subs', (req, res) => {
+            if (!req.user) {
+                return res.sendStatus(401);
+            }
+            this.db.moddedSubreddits.findAll({
+                where: {
+                    user: req.user.name,
+                },
+            })
+                .then(subs => {
+                    let jsonSubs = [];
+                    _.forEach(subs, (sub) => {
+                        jsonSubs.push(sub.get('subreddit'));
+                    });
+                    res.send(jsonSubs);
+                })
+                .catch(error => {
+                    console.error('Could not fetch modded subs for user:');
+                    console.error(error.message);
+                    console.error(error.stack);
+                    res.status(500);
+                });
+        });
         this.express.get('/settings/existing-mappings', (req, res) => {
             if (!req.user) {
                 return res.sendStatus(401);
@@ -123,7 +170,6 @@ class WebServer {
                     console.error(error.message);
                     console.error(error.stack);
                     res.status(500);
-                    res.send('Could not fetch existing mappings');
                 });
         });
     }
