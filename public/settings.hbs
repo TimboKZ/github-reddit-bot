@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>GitHub Reddit Bot</title>
     <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 
@@ -47,14 +48,16 @@
         },
         methods: {
             fetchModdedSubs: function () {
-                this.$http.get('/settings/modded-subs', function (data) {
-                    this.moddedSubs = data;
-                }).bind(this);
+                var self = this;
+                axios.get('/settings/modded-subs').then(response => {
+                    self.moddedSubs = response.data;
+                });
             },
             fetchMappings: function () {
-                this.$http.get('/settings/existing-mappings', function (data) {
-                    this.mappings = data;
-                }).bind(this);
+                var self = this;
+                axios.get('/settings/existing-mappings').then(response => {
+                    self.mappings = response.data;
+                });
             }
         }
     });
