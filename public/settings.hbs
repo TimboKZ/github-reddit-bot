@@ -67,7 +67,7 @@
             },
             addSub: function () {
                 var self = this;
-                axios.put('/settings/existing-mappings', {subreddit: self.subInput})
+                axios.put('/settings/modded-subs', {subreddit: self.subInput})
                         .then(function() {
                             self.fetchModdedSubs()
                         })
