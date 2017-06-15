@@ -12,8 +12,11 @@
 
 
 <div class="container">
-    <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
     <div id="app">
+        <h1>Hello, /u/{{user.name}} <a class="btn btn-primary btn-md" href="{{baseUrl}}/logout">Sign out</a></h1>
+
+        <hr>
+
         <h2>Subreddits you moderate
             <button class="btn btn-default btn-sm" v-on:click="fetchModdedSubs">Refresh</button>
         </h2>
@@ -24,7 +27,7 @@
             <li v-for="sub in moddedSubs">
                 \{{ sub.subreddit }} <button class="btn btn-danger" v-on:click="deleteSub(sub.id)">Delete</button>
             </li>
-            <li><input v-model="subInput" placeholder="Enter a subreddit name">
+            <li><input v-model="subInput" class="form-control" placeholder="Enter a subreddit name">
                 <button class="btn btn-primary" v-on:click="addSub">Add</button>
             </li>
         </ol>
@@ -50,7 +53,7 @@
             <tbody>
             <tr is="mapping-item" v-for="mapping in mappings" :mapping="mapping"></tr>
             <tr>
-                <td><input v-model="mappingInput.repo" placeholder="Enter a repository name"></td>
+                <td><input v-model="mappingInput.repo" class="form-control" placeholder="Enter a repository name"></td>
                 <td>
                     <select v-model="mappingInput.subreddit" class="form-control">
                         <option v-for="sub in moddedSubs">\{{sub.subreddit}}</option>
