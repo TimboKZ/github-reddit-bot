@@ -9,6 +9,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 const passport = require('passport');
 const crypto = require('crypto');
 const RedditStrategy = require('passport-reddit').Strategy;
@@ -49,6 +50,7 @@ class WebServer {
         /** @var {Express} */
         this.express = express();
         this.express.use(bodyParser.json());
+        this.express.use(session({ secret: this.config.userAgent }));
         this.express.use(passport.initialize());
         this.express.use(passport.session());
         this.express.get('/', (req, res) => {
