@@ -41,13 +41,13 @@
 <script>
     Vue.component('mapping-item', {
         props: ['mapping'],
-        template: ['<tr>' +
+        template: '<tr>' +
         '<td>\{{mapping.repo}}</td>' +
         '<td>\{{mapping.subreddit}}</td>' +
         '<td>\{{mapping.author}}</td>' +
         '<td>\{{mapping.secret}}</td>' +
         '<td>Button</td>' +
-        '</tr>']
+        '</tr>'
     });
 
     var moddedSubs = new Vue({
