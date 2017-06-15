@@ -11,11 +11,13 @@
 <div class="entry">
     <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
     <div id="app">
+        <h2>Subreddits you moderate: <button v-on:clicl="fetchModdedSubs">Refresh</button></h2>
         <ol>
             <li v-for="sub in moddedSubs">
                 \{{ sub.subreddit }}
             </li>
         </ol>
+        <h2>Your mappings: <button v-on:clicl="fetchMappings">Refresh</button></h2>
         <table>
             <thead>
             <tr>
