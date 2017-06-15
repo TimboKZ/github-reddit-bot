@@ -11,13 +11,20 @@
 <div class="entry">
     <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
     <div id="app">
-        <h2>Subreddits you moderate: <button v-on:clicl="fetchModdedSubs">Refresh</button></h2>
+        <h2>Subreddits you moderate:
+            <button v-on:click="fetchModdedSubs">Refresh</button>
+        </h2>
         <ol>
             <li v-for="sub in moddedSubs">
                 \{{ sub.subreddit }}
             </li>
+            <li><input v-model="subInput" placeholder="edit me">
+                <button v-on:click="addSub">Add</button>
+            </li>
         </ol>
-        <h2>Your mappings: <button v-on:clicl="fetchMappings">Refresh</button></h2>
+        <h2>Your mappings:
+            <button v-on:click="fetchMappings">Refresh</button>
+        </h2>
         <table>
             <thead>
             <tr>
@@ -44,6 +51,7 @@
         el: '#app',
         data: {
             moddedSubs: [],
+            subInput: '',
             mappings: [],
         },
         created: function () {
@@ -53,15 +61,26 @@
         methods: {
             fetchModdedSubs: function () {
                 var self = this;
-                axios.get('/settings/modded-subs').then(response => {
+                axios.get('/settings/modded-subs').then(function(response) {
                     self.moddedSubs = response.data;
                 });
             },
+            addSub: function () {
+                var self = this;
+                axios.put('/settings/existing-mappings', {subreddit: self.subInput})
+                        .then(function() {
+                            self.fetchModdedSubs()
+                        })
+                        .catch(function(error) {
+                            console.error(error.message);
+                        });
+            },
             fetchMappings: function () {
                 var self = this;
-                axios.get('/settings/existing-mappings').then(response => {
-                    self.mappings = response.data;
-                });
+                axios.get('/settings/existing-mappings')
+                        .then(function(response) {
+                            self.mappings = response.data;
+                        });
             }
         },
     });

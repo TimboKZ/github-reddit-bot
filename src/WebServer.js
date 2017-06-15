@@ -12,12 +12,13 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
-const crypto = require('crypto');
 const exphbs = require('express-handlebars');
 const RedditStrategy = require('passport-reddit').Strategy;
 const Promise = require('bluebird');
-const {Request} = require('./RequestQueue');
 const _ = require('lodash');
+const RedditClient = require('./RedditClient');
+const {Request} = require('./RequestQueue');
+const Util = require('./Util');
 
 const PUBLIC_PATH = path.normalize(path.join(__dirname, '..', 'public'));
 
@@ -100,25 +101,24 @@ class WebServer {
             if (!req.user) {
                 return res.sendStatus(401);
             }
-            if(!req.query.subreddit) {
+            if(!req.query.subreddit || req.query.subreddit === '') {
                 return res.sendStatus(400);
             }
+
             this.reddit.subredditExists(req.query.subreddit)
                 .then(exists => {
-                    if(!exists) throw new Error(`Subreddit ${req.query.subreddit} does not exist!`);
+                    if (!exists) throw new Error(`Subreddit ${req.query.subreddit} does not exist!`);
+                    return RedditClient.hasMod(req.query.subreddit, req.user.name);
+                })
+                .then(isMod => {
+                    if(!isMod) throw new Error(`You're not a mod of ${req.query.subreddit}!`);
                     return this.db.moddedSubreddits.create({
                         user: req.user.name,
                         subreddit: req.query.subreddit,
                     });
                 })
                 .then(() => res.sendStatus(200))
-                .catch(error => {
-                    console.error('Could not add a modded sub for user:');
-                    console.error(error.message);
-                    console.error(error.stack);
-                    res.status(500);
-                    res.send(error.message);
-                });
+                .catch(error => Util.logError(error, 'Could not add a modded sub for user', res));
         });
         this.express.delete('/settings/modded-subs', (req, res) => {
             if (!req.user) {
@@ -137,16 +137,14 @@ class WebServer {
                 .then(subs => {
                     let jsonSubs = [];
                     _.forEach(subs, (sub) => {
-                        jsonSubs.push(sub.get('subreddit'));
+                        jsonSubs.push({
+                            id: sub.get('id'),
+                            subreddit: sub.get('subreddit'),
+                        });
                     });
                     res.send(jsonSubs);
                 })
-                .catch(error => {
-                    console.error('Could not fetch modded subs for user:');
-                    console.error(error.message);
-                    console.error(error.stack);
-                    res.status(500);
-                });
+                .catch(error => Util.logError(error, 'Could not fetch modded subs for user:', res));
         });
         this.express.get('/settings/existing-mappings', (req, res) => {
             if (!req.user) {
