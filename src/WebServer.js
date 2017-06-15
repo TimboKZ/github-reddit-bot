@@ -63,6 +63,7 @@ class WebServer {
         this.express.engine('hbs', exphbs());
         this.express.set('view engine', 'hbs');
         this.express.use(bodyParser.json());
+        this.express.use(bodyParser.urlencoded());
         this.express.use(cookieParser());
         this.express.use(session({
             secret: 'keyboard cat',
