@@ -103,16 +103,21 @@ class WebServer {
             if(!req.query.subreddit) {
                 return res.sendStatus(400);
             }
-            this.db.moddedSubreddits.create({
-                user: req.user.name,
-
-            })
+            this.reddit.subredditExists(req.query.subreddit)
+                .then(exists => {
+                    if(!exists) throw new Error(`Subreddit ${req.query.subreddit} does not exist!`);
+                    return this.db.moddedSubreddits.create({
+                        user: req.user.name,
+                        subreddit: req.query.subreddit,
+                    });
+                })
                 .then(() => res.sendStatus(200))
                 .catch(error => {
                     console.error('Could not add a modded sub for user:');
                     console.error(error.message);
                     console.error(error.stack);
-                    res.sendStatus(500);
+                    res.status(500);
+                    res.send(error.message);
                 });
         });
         this.express.delete('/settings/modded-subs', (req, res) => {

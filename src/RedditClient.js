@@ -74,6 +74,18 @@ class RedditClient {
 
     /**
      * @param {string} subName
+     * @return Promise<boolean>
+     */
+    subredditExists(subName) {
+        return new Promise((resolve) => {
+            this.reddit.getSubreddit(subName).getHot()
+                .then(() => resolve(true))
+                .catch(() => resolve(false));
+        });
+    }
+
+    /**
+     * @param {string} subName
      * @param {string} username
      */
     static hasMod(subName, username) {

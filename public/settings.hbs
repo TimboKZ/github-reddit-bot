@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>GitHub Reddit Bot</title>
+    <script src="https://unpkg.com/vue"></script>
 </head>
 <body>
-    <div class="entry">
-        <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
-        <div class="body">
-            : ^ )
-        </div>
+
+<div class="entry">
+    <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
+    <div id="app">
+        {{ message }}
     </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        }
+    })
+</script>
+
 </body>
 </html>
