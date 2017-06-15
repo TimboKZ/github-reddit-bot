@@ -142,7 +142,7 @@ class WebServer {
             }
             else {
                 res.status(403);
-                res.send('Invalid session hash - please try again.');
+                res.send(`'Invalid session hash - please try again.\n${req.query.state}\n${req.session.state}`);
             }
         });
         this.express.get('/logout', (req, res) => {
