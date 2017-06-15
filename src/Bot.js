@@ -41,7 +41,7 @@ class Bot {
 
                 this.db.moddedSubreddits.sync({force: true}).then(() => this.db.moddedSubreddits.create({
                     user: 'Timbo_KZ',
-                    subredditName: 'GithubRedditBot',
+                    subreddit: 'GithubRedditBot',
                 }));
                 this.db.activeRepos.sync({force: true}).then(() => this.db.activeRepos.create({
                     repoName: 'TimboKZ/github-reddit-bot',
