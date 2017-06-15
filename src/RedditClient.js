@@ -33,6 +33,7 @@ class RedditClient {
     processQueue() {
         this.queue.getIncompleteRequests()
             .then((incompleteRequests) => {
+                // TODO: Add moderator check - accept moderator invite if necessary
                 console.log(`Processing ${incompleteRequests.length} incomplete requests...`);
                 incompleteRequests.forEach(request => {
                     this.submitSelfPost(

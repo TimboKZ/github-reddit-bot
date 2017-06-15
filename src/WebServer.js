@@ -9,20 +9,21 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
+const crypto = require('crypto');
+const RedditStrategy = require('passport-reddit').Strategy;
 const Promise = require('bluebird');
 const {Request} = require('./RequestQueue');
 
-/**
- * @property {express.application} express
- */
 class WebServer {
 
     /**
-     * @param {number} port
+     * @param {{url: string, port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
      * @param {RequestQueue} queue
      */
-    constructor(port, queue) {
-        this.port = port;
+    constructor(config, queue) {
+        this.config = config;
+        this.port = this.config.port;
         this.queue = queue;
 
         this.server = null;
@@ -30,18 +31,47 @@ class WebServer {
     }
 
     setup() {
+        passport.use(new RedditStrategy(
+            {
+                clientID: this.config.clientId,
+                clientSecret: this.config.clientSecret,
+                callbackURL: `${this.config.url}/auth/reddit/callback`
+            },
+            (accessToken, refreshToken, profile, done) => done(null, {redditId: profile.id})
+        ));
+
+        /** @var {Express} */
         this.express = express();
         this.express.use(bodyParser.json());
+        this.express.use(passport.initialize());
         this.express.get('/', (req, res) => {
             let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
             res.sendFile(indexPath);
         });
         this.express.all('/hooks', this.processHook.bind(this));
+        this.express.get('/auth/reddit', (req, res, next) => {
+            req.session.state = crypto.randomBytes(32).toString('hex');
+            passport.authenticate('reddit', {
+                state: req.session.state,
+            })(req, res, next);
+        });
+        this.express.get('/auth/reddit/callback', function(req, res, next){
+            // Check for origin via state token
+            if (req.query.state == req.session.state){
+                passport.authenticate('reddit', {
+                    successRedirect: '/settings',
+                    failureRedirect: '/'
+                })(req, res, next);
+            }
+            else {
+                next( new Error(403) );
+            }
+        });
     }
 
     /**
-     * @param {express.request} req
-     * @param {express.response} res
+     * @param {Request} req
+     * @param {Response} res
      */
     processHook(req, res) {
         let userAgent = req.get('User-Agent');
@@ -61,15 +91,13 @@ class WebServer {
     /**
      * @param {string} userAgent
      * @param {string} eventType
-     * @param {string} signature
      * @param {string} deliveryID
      * @returns {boolean}
      */
     static validateRequest(userAgent, eventType, deliveryID) {
-        if (!userAgent.match(/^GitHub-Hookshot/gi)) return false;
-        if (!eventType) return false;
-        if (!deliveryID) return false;
-        return true;
+        return userAgent.match(/^GitHub-Hookshot/gi)
+            && !!eventType
+            && !!deliveryID;
     }
 
     start() {

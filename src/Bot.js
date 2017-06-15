@@ -14,7 +14,7 @@ const WebServer = require('./WebServer');
 class Bot {
 
     /**
-     * @type {{port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
+     * @param {{url: string, port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
      */
     constructor(config) {
         this.config = config;
@@ -29,7 +29,7 @@ class Bot {
             this.config.userAgent,
             this.queue
         );
-        this.server = new WebServer(this.config.port, this.queue);
+        this.server = new WebServer(this.config, this.queue);
     }
 
     start() {

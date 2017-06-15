@@ -12,6 +12,7 @@ const Package = require('./package.json');
 const Bot = require('./src/Bot');
 
 const config = {
+    url: process.env.URL,
     port: process.env.PORT || 5000,
     dbUrl: process.env.DATABASE_URL,
     clientId: process.env.CLIENT_ID,

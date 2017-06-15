@@ -10,7 +10,11 @@ const Promise = require('bluebird');
 const request = require('supertest');
 const WebServer = require('../src/WebServer');
 
-const PORT = 5000;
+const config = {
+    clientId: '123',
+    clientSecret: '123',
+    port: 5000
+};
 
 describe('WebServer', () => {
 
@@ -24,7 +28,7 @@ describe('WebServer', () => {
                 });
             }
         };
-        server = new WebServer(PORT, queueMock);
+        server = new WebServer(config, queueMock);
         server.start();
     });
 
