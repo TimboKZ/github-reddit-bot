@@ -36,6 +36,9 @@
 </div>
 
 <script>
+    Vue.component('mapping-item', {
+        template: '#mapping-item-template'
+    });
     new Vue({
         el: '#app',
         data: {
@@ -59,10 +62,10 @@
                     self.mappings = response.data;
                 });
             }
-        }
+        },
     });
 </script>
-<script type="text/x-template" id="mapping-item">
+<script type="text/x-template" id="mapping-item-template">
     <tr>
         <td>\{{ mapping.repo }}</td>
         <td>\{{ mapping.subreddit }}</td>
