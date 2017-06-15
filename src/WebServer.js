@@ -32,10 +32,10 @@ class WebServer {
     }
 
     setup() {
-        passport.serializeUser(function(user, done) {
+        passport.serializeUser(function (user, done) {
             done(null, user);
         });
-        passport.deserializeUser(function(obj, done) {
+        passport.deserializeUser(function (obj, done) {
             done(null, obj);
         });
         passport.use(new RedditStrategy(
@@ -44,36 +44,44 @@ class WebServer {
                 clientSecret: this.config.clientSecret,
                 callbackURL: `${this.config.url}/auth/reddit/callback`
             },
-            (accessToken, refreshToken, profile, done) => done(null, {redditId: profile.id})
+            (accessToken, refreshToken, profile, done) => done(null, {...profile})
         ));
 
         /** @var {Express} */
         this.express = express();
         this.express.use(bodyParser.json());
-        this.express.use(session({ secret: this.config.userAgent }));
+        this.express.use(session({secret: this.config.userAgent}));
         this.express.use(passport.initialize());
         this.express.use(passport.session());
         this.express.get('/', (req, res) => {
             let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
-            res.sendFile(indexPath);
+            if (req.user) {
+                res.redirect('/settings');
+            } else {
+                res.sendFile(indexPath);
+            }
         });
         this.express.all('/hooks', this.processHook.bind(this));
+        this.express.settings('/settings', (req, res) => {
+            res.send('Hello!' + JSON.stringify(req.user));
+        });
         this.express.get('/auth/reddit', (req, res, next) => {
             req.session.state = crypto.randomBytes(32).toString('hex');
             passport.authenticate('reddit', {
                 state: req.session.state,
             })(req, res, next);
         });
-        this.express.get('/auth/reddit/callback', function(req, res, next){
+        this.express.get('/auth/reddit/callback', function (req, res, next) {
             // Check for origin via state token
-            if (req.query.state == req.session.state){
+            if (req.query.state == req.session.state) {
                 passport.authenticate('reddit', {
                     successRedirect: '/settings',
                     failureRedirect: '/'
                 })(req, res, next);
             }
             else {
-                next( new Error(403) );
+                res.status(403);
+                res.send('Invalid session hash - please try again.');
             }
         });
     }
