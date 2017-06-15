@@ -54,8 +54,8 @@ class WebServer {
 
         /** @var {Express} */
         this.express = express();
-        this.express.engine('handlebars', exphbs());
-        this.express.set('view engine', 'handlebars');
+        this.express.engine('hbs', exphbs());
+        this.express.set('view engine', 'hbs');
         this.express.use(bodyParser.json());
         this.express.use(session({secret: this.config.userAgent}));
         this.express.use(passport.initialize());
