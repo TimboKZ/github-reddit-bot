@@ -16,6 +16,7 @@ const exphbs = require('express-handlebars');
 const RedditStrategy = require('passport-reddit').Strategy;
 const Promise = require('bluebird');
 const {Request} = require('./RequestQueue');
+const _ = require('lodash');
 
 const PUBLIC_PATH = path.normalize(path.join(__dirname, '..', 'public'));
 
@@ -97,7 +98,31 @@ class WebServer {
             if(!req.user) {
                 return res.sendStatus(401);
             }
-            this.reddit.getModdedSubs(req.user.name);
+            this.db.activeRepos.findAll({
+                where: {
+                    author: req.user.name,
+                },
+            })
+                .then(mappings => {
+                    let jsonMappings = [];
+                    _.forEach(mappings, (mapping) => {
+                        jsonMappings.push({
+                            id: mapping.get('id'),
+                            repo: mapping.get('repoName'),
+                            subreddit: mapping.get('subredditName'),
+                            author: mapping.get('author'),
+                            secret: mapping.get('secret'),
+                        });
+                    });
+                    res.send(jsonMappings);
+                })
+                .catch(error => {
+                    console.error('Could not fetch existing mapping for user:');
+                    console.error(error.message);
+                    console.error(error.stack);
+                    res.status(500);
+                    res.send('Could not fetch existing mappings');
+                });
         });
     }
 
