@@ -10,7 +10,8 @@
 </head>
 <body>
 
-<div class="entry">
+
+<div class="container">
     <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
     <div id="app">
         <h2>Subreddits you moderate:
@@ -29,7 +30,7 @@
         <h2>Your mappings:
             <button v-on:click="fetchMappings">Refresh</button>
         </h2>
-        <table>
+        <table class="table table-striped table-responsive">
             <thead>
             <tr>
                 <th>Repository</th>
