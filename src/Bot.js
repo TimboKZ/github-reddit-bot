@@ -29,7 +29,7 @@ class Bot {
             this.config.userAgent,
             this.queue
         );
-        this.server = new WebServer(this.config, this.queue);
+        this.server = new WebServer(this.config, this.reddit, this.queue);
     }
 
     start() {

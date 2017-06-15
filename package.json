@@ -36,6 +36,7 @@
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.2",
+    "express-handlebars": "^3.0.0",
     "express-session": "^1.15.3",
     "passport": "^0.3.2",
     "passport-reddit": "^0.2.4",

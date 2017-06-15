@@ -12,19 +12,24 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 const crypto = require('crypto');
+const exphbs = require('express-handlebars');
 const RedditStrategy = require('passport-reddit').Strategy;
 const Promise = require('bluebird');
 const {Request} = require('./RequestQueue');
+
+const PUBLIC_PATH = path.normalize(path.join(__dirname, '..', 'public'));
 
 class WebServer {
 
     /**
      * @param {{url: string, port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
+     * @param reddit
      * @param {RequestQueue} queue
      */
-    constructor(config, queue) {
+    constructor(config, reddit, queue) {
         this.config = config;
         this.port = this.config.port;
+        this.reddit = reddit;
         this.queue = queue;
 
         this.server = null;
@@ -42,19 +47,21 @@ class WebServer {
             {
                 clientID: this.config.clientId,
                 clientSecret: this.config.clientSecret,
-                callbackURL: `${this.config.url}/auth/reddit/callback`
+                callbackURL: `${this.config.url}/auth/reddit/callback`,
             },
             (accessToken, refreshToken, profile, done) => done(null, {id: profile.id, name: profile.name})
         ));
 
         /** @var {Express} */
         this.express = express();
+        this.express.engine('handlebars', exphbs());
+        this.express.set('view engine', 'handlebars');
         this.express.use(bodyParser.json());
         this.express.use(session({secret: this.config.userAgent}));
         this.express.use(passport.initialize());
         this.express.use(passport.session());
         this.express.get('/', (req, res) => {
-            let indexPath = path.normalize(path.join(__dirname, '..', 'index.html'));
+            let indexPath = path.join(PUBLIC_PATH, 'index.html');
             if (req.user) {
                 return res.redirect('/settings');
             }
@@ -65,7 +72,10 @@ class WebServer {
             if (!req.user) {
                 return res.redirect('/');
             }
-            res.send(`Hello! ${JSON.stringify(req.user)}`);
+            let settingsPath = path.join(PUBLIC_PATH, 'settings.hbs');
+            res.render(settingsPath, {
+                user: req.user,
+            });
         });
         this.express.get('/auth/reddit', (req, res, next) => {
             req.session.state = crypto.randomBytes(32).toString('hex');
@@ -73,18 +83,21 @@ class WebServer {
                 state: req.session.state,
             })(req, res, next);
         });
-        this.express.get('/auth/reddit/callback', function (req, res, next) {
-            // Check for origin via state token
-            if (req.query.state == req.session.state) {
+        this.express.get('/auth/reddit/callback', (req, res, next) => {
+            if (req.query.state === req.session.state) {
                 passport.authenticate('reddit', {
                     successRedirect: '/settings',
-                    failureRedirect: '/'
+                    failureRedirect: '/',
                 })(req, res, next);
             }
             else {
                 res.status(403);
                 res.send('Invalid session hash - please try again.');
             }
+        });
+        this.express.get('/logout', (req, res) => {
+            req.logout();
+            res.redirect('/');
         });
     }
 
