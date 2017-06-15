@@ -102,7 +102,8 @@ class WebServer {
                 return res.sendStatus(401);
             }
             if(!req.query.subreddit || req.query.subreddit === '') {
-                return res.sendStatus(400);
+                res.status(400);
+                return res.send(`Bad subreddit string: ${req.query.subreddit}`);
             }
 
             this.reddit.subredditExists(req.query.subreddit)
