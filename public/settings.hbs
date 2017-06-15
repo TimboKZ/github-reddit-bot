@@ -41,30 +41,20 @@
             moddedSubs: [],
             mappings: [],
         },
-        mounted: function () {
+        created: function () {
             this.fetchModdedSubs();
             this.fetchMappings();
         },
         methods: {
             fetchModdedSubs: function () {
-                console.log('123');
-                var self = this;
-                var xhr = new XMLHttpRequest();
-                xhr.open('{{baseUrl}}/settings/modded-subs');
-                xhr.onload = function () {
-                    self.moddedSubs = JSON.parse(xhr.responseText)
-                };
-                xhr.send();
+                this.$http.get('/settings/modded-subs', function (data) {
+                    this.moddedSubs = data;
+                }).bind(this);
             },
             fetchMappings: function () {
-                console.log('321');
-                var self = this;
-                var xhr = new XMLHttpRequest();
-                xhr.open('{{baseUrl}}/settings/existing-mappings');
-                xhr.onload = function () {
-                    self.mappings = JSON.parse(xhr.responseText)
-                };
-                xhr.send();
+                this.$http.get('/settings/existing-mappings', function (data) {
+                    this.mappings = data;
+                }).bind(this);
             }
         }
     });
