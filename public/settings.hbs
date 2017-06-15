@@ -4,19 +4,18 @@
     <meta charset="UTF-8">
     <title>GitHub Reddit Bot</title>
     <script src="https://unpkg.com/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
 </head>
 <body>
 
 <div class="entry">
     <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
-    <div id="modded-subs">
+    <div id="app">
         <ol>
-            <li v-for="sub in subs">
+            <li v-for="sub in moddedSubs">
                 \{{ sub.subreddit }}
             </li>
         </ol>
-    </div>
-    <div id="mappings">
         <table>
             <thead>
             <tr>
@@ -28,52 +27,46 @@
             </tr>
             </thead>
             <tbody>
-            <mapping-item
-                    v-for="mapping in mappings"
-                    v-bind:mapping="mapping"
-                    v-bind:key="mapping.id">
-            </mapping-item>
+            <tr is="mapping-item" v-for="mapping in mappings" :mappings="mappings"></tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    Vue.component('mapping-item', {
-        props: ['mapping'],
-        template: '<tr>' +
-        '<td>\{{mapping.repo}}</td>' +
-        '<td>\{{mapping.subreddit}}</td>' +
-        '<td>\{{mapping.author}}</td>' +
-        '<td>\{{mapping.secret}}</td>' +
-        '<td>Button</td>' +
-        '</tr>'
-    });
-
-    var moddedSubs = new Vue({
-        el: '#modded-subs',
+    Vue.use(VueResource);
+    new Vue({
+        el: '#app',
         data: {
-            subs: [
-                {subreddit: 'Hello'}
-            ]
+            moddedSubs: [],
+            mappings: [],
         },
-        methods: {}
-    });
-    var mappings = new Vue({
-        el: '#mappings',
-        data: {
-            mappings: [
-                {
-                    id: '123',
-                    repo: 'RepoName',
-                    subreddit: 'SubName',
-                    author: 'TimTim',
-                    secret: 'SecretKey',
-                },
-            ]
+        ready: function () {
+            this.fetchModdedSubs();
+            this.fetchMappings();
         },
-        methods: {}
+        methods: {
+            fetchModdedSubs: function () {
+                this.$http.get('{{baseUrl}}/settings/modded-subs', function (moddedSubs) {
+                    this.$set('moddedSubs', moddedSubs);
+                });
+            },
+            fetchMappings: function () {
+                this.$http.get('{{baseUrl}}/settings/existing-mappings', function (mappings) {
+                    this.$set('mappings', mappings);
+                });
+            }
+        }
     });
+</script>
+<script type="text/x-template" id="mapping-item-template">
+    <tr>
+        <td>\{{ mapping.repo }}</td>
+        <td>\{{ mapping.subreddit }}</td>
+        <td>\{{ mapping.author }}</td>
+        <td>\{{ mapping.secret }}</td>
+        <td>Button</td>
+    </tr>
 </script>
 
 </body>
