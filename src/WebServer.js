@@ -44,7 +44,7 @@ class WebServer {
                 clientSecret: this.config.clientSecret,
                 callbackURL: `${this.config.url}/auth/reddit/callback`
             },
-            (accessToken, refreshToken, profile, done) => done(null, {...profile})
+            (accessToken, refreshToken, profile, done) => done(null, {id: profile.id, name: profile.name})
         ));
 
         /** @var {Express} */
