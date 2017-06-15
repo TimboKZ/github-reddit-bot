@@ -67,7 +67,6 @@ class WebServer {
             secret: 'keyboard cat',
             resave: false,
             saveUninitialized: false,
-            cookie: {secure: true},
         }));
         this.express.use(passport.initialize());
         this.express.use(passport.session());
