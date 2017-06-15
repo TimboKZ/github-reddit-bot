@@ -52,6 +52,7 @@ class WebServer {
                 clientID: this.config.clientId,
                 clientSecret: this.config.clientSecret,
                 callbackURL: `${this.config.url}/auth/reddit/callback`,
+                state: true,
             },
             (accessToken, refreshToken, profile, done) => done(null, {id: profile.id, name: profile.name})
         ));
@@ -65,8 +66,8 @@ class WebServer {
         this.express.use(session({
             secret: 'keyboard cat',
             resave: false,
-            saveUninitialized: true,
-            cookie: { secure: true },
+            saveUninitialized: false,
+            cookie: {secure: true},
         }));
         this.express.use(passport.initialize());
         this.express.use(passport.session());
@@ -97,7 +98,7 @@ class WebServer {
             });
         });
         this.express.get('/settings/existing-mappings', (req, res) => {
-            if(!req.user) {
+            if (!req.user) {
                 return res.sendStatus(401);
             }
             this.db.activeRepos.findAll({
@@ -129,24 +130,11 @@ class WebServer {
     }
 
     setupAuth() {
-        this.express.get('/auth/reddit', (req, res, next) => {
-            req.session.state = crypto.randomBytes(32).toString('hex');
-            passport.authenticate('reddit', {
-                state: req.session.state,
-            })(req, res, next);
-        });
-        this.express.get('/auth/reddit/callback', (req, res, next) => {
-            if (req.query.state === req.session.state) {
-                passport.authenticate('reddit', {
-                    successRedirect: '/settings',
-                    failureRedirect: '/',
-                })(req, res, next);
-            }
-            else {
-                res.status(403);
-                res.send(`Invalid session hash - please try again.\n${req.query.state}\n${req.session.state}`);
-            }
-        });
+        this.express.get('/auth/reddit', passport.authenticate('reddit'));
+        this.express.get('/auth/reddit/callback', passport.authenticate('reddit', {
+            successRedirect: '/settings',
+            failureRedirect: '/',
+        }));
         this.express.get('/logout', (req, res) => {
             req.logout();
             res.redirect('/');
