@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>GitHub Reddit Bot</title>
     <script src="https://unpkg.com/vue"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
 </head>
 <body>
 
@@ -49,14 +48,23 @@
         },
         methods: {
             fetchModdedSubs: function () {
-                this.$http.get('{{baseUrl}}/settings/modded-subs', function (moddedSubs) {
-                    this.$set('moddedSubs', moddedSubs);
-                });
+
+                var self = this;
+                var xhr = new XMLHttpRequest();
+                xhr.open('{{baseUrl}}/settings/modded-subs');
+                xhr.onload = function () {
+                    self.moddedSubs = JSON.parse(xhr.responseText)
+                };
+                xhr.send();
             },
             fetchMappings: function () {
-                this.$http.get('{{baseUrl}}/settings/existing-mappings', function (mappings) {
-                    this.$set('mappings', mappings);
-                });
+                var self = this;
+                var xhr = new XMLHttpRequest();
+                xhr.open('{{baseUrl}}/settings/existing-mappings');
+                xhr.onload = function () {
+                    self.mappings = JSON.parse(xhr.responseText)
+                };
+                xhr.send();
             }
         }
     });
