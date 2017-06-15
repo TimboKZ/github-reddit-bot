@@ -9,18 +9,71 @@
 
 <div class="entry">
     <h1>Hello, /u/{{user.name}} <a href="{{baseUrl}}/logout">Sign out</a></h1>
-    <div id="app">
-        {{ message }}
+    <div id="modded-subs">
+        <ol>
+            <li v-for="sub in subs">
+                \{{ sub.subreddit }}
+            </li>
+        </ol>
+    </div>
+    <div id="mappings">
+        <table>
+            <thead>
+            <tr>
+                <th>Repository</th>
+                <th>Subreddit</th>
+                <th>Author</th>
+                <th>Secret</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <mapping-item
+                    v-for="mapping in mappings"
+                    v-bind:mapping="mapping"
+                    v-bind:key="mapping.id">
+            </mapping-item>
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    var app = new Vue({
-        el: '#app',
+    Vue.component('mapping-item', {
+        props: ['mapping'],
+        template: ['<tr>' +
+        '<td>\{{mapping.repo}}</td>' +
+        '<td>\{{mapping.subreddit}}</td>' +
+        '<td>\{{mapping.author}}</td>' +
+        '<td>\{{mapping.secret}}</td>' +
+        '<td>Button</td>' +
+        '</tr>']
+    });
+
+    var moddedSubs = new Vue({
+        el: '#modded-subs',
         data: {
-            message: 'Hello Vue!'
-        }
-    })
+            subs: [
+                {subreddit: 'Hello'}
+            ]
+        },
+        methods: {}
+    });
+    var mappings = new Vue({
+        el: '#mappings',
+        data: {
+            mappings: [
+                {
+                    id: '123',
+                    repo: 'RepoName',
+                    subreddit: 'SubName',
+                    author: 'TimTim',
+                    secret: 'SecretKey',
+                },
+            ]
+        },
+        methods: {}
+    });
 </script>
 
 </body>
