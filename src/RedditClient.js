@@ -90,8 +90,20 @@ class RedditClient {
      * @return Promise<boolean>
      */
     botIsAMod(subName, botName) {
-        return this.reddit.getSubreddit(subName).acceptModeratorInvite()
-            .then(() => RedditClient.hasMod(subName, botName));
+        return new Promise((resolve, reject) => {
+            RedditClient.hasMod(subName, botName)
+                .then(botIsAMod => {
+                    if(botIsAMod) return resolve(true);
+                    this.reddit.getSubreddit(subName).acceptModeratorInvite()
+                        .then(RedditClient.hasMod(subName, botName))
+                        .then(botIsAMod => resolve(botIsAMod))
+                        .catch(error => {
+                            if(error.message.indexOf('NO_INVITE_FOUND') !== -1) return resolve(false);
+                            reject(error);
+                        });
+                })
+                .catch(error => reject(error));
+        });
     }
 
     /**
