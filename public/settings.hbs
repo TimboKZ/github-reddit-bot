@@ -92,7 +92,12 @@
 <script>
     Vue.component('mapping-item', {
         template: '#mapping-item-template',
-        props: ['mapping', 'deleteMapping'],
+        props: ['mapping'],
+        methods: {
+            deleteMapping: function (id) {
+                this.$dispatch('deleteMapping', id)
+            },
+        },
     });
     new Vue({
         el: '#app',
