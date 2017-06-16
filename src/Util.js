@@ -30,13 +30,14 @@ class Util {
      * @param {boolean} [throwError]
      */
     static sendJsonError(res, message, throwError = true) {
+        if (!res || res.headerSent) return;
         res.status(200);
         res.json({
             error: {
                 message,
             },
         });
-        if(throwError) {
+        if (throwError) {
             throw new Error(message);
         }
     }

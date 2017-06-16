@@ -114,14 +114,17 @@ class WebServer {
                     return RedditClient.hasMod(subreddit, req.user.name);
                 })
                 .then(isMod => {
-                    if (!isMod) Util.sendJsonError(res, `Subreddit ${subreddit} does not exist!`);
+                    if (!isMod) Util.sendJsonError(res, `You're not a moderator of ${subreddit}!`);
                     return this.db.moddedSubreddits.create({
                         user: req.user.name,
                         subreddit: subreddit,
                     });
                 })
                 .then(() => res.sendStatus(200))
-                .catch(error => Util.logError(error, 'Could not add a modded sub for user', res));
+                .catch(error => {
+                    Util.sendJsonError(res, `Could not add ${subreddit} as a modded sub: ${error.message}`, false);
+                    Util.logError(error, 'Could not add a modded sub for user');
+                });
         });
         this.express.delete('/settings/modded-subs/:id', (req, res) => {
             if (!req.user) {
@@ -129,8 +132,7 @@ class WebServer {
             }
             let id = req.params.id;
             if (!id || id === '') {
-                res.status(400);
-                return res.send(`Bad ID string: ${id}`);
+                return Util.sendJsonError(res, `Bad ID string: ${id}`);
             }
 
             this.db.moddedSubreddits.destroy({
@@ -140,7 +142,10 @@ class WebServer {
                 },
             })
                 .then(() => res.sendStatus(200))
-                .catch(error => Util.logError(error, 'Could not delete a modded subreddit', res));
+                .catch(error => {
+                    Util.sendJsonError(res, `Could not delete a modded sub: ${error.message}`, false);
+                    Util.logError(error, 'Could not delete a modded subreddit');
+                });
         });
         this.express.get('/settings/modded-subs', (req, res) => {
             if (!req.user) {
@@ -180,11 +185,11 @@ class WebServer {
 
             this.reddit.subredditExists(subreddit)
                 .then(exists => {
-                    if (!exists) throw new Error(`Subreddit ${subreddit} does not exist!`);
+                    if (!exists) Util.sendJsonError(res, `Subreddit ${subreddit} does not exist!`);
                     return RedditClient.hasMod(subreddit, req.user.name);
                 })
                 .then(isMod => {
-                    if (!isMod) throw new Error(`You're not a mod of ${subreddit}!`);
+                    if (!isMod) Util.sendJsonError(res, `You're not a moderator of ${subreddit}!`);
                     let random = Math.random().toString();
                     let secret = crypto.createHash('sha1').update(repo + subreddit + random).digest('hex');
                     return this.db.activeRepos.create({
@@ -195,7 +200,10 @@ class WebServer {
                     });
                 })
                 .then(() => res.sendStatus(200))
-                .catch(error => Util.logError(error, 'Could not add a mapping sub for user', res));
+                .catch(error => {
+                    Util.sendJsonError(res, `Could not add a mapping: ${error.message}`, false);
+                    Util.logError(error, 'Could not add a mapping');
+                });
         });
         this.express.delete('/settings/existing-mappings/:id', (req, res) => {
             if (!req.user) {
@@ -203,8 +211,7 @@ class WebServer {
             }
             let id = req.params.id;
             if (!id || id === '') {
-                res.status(400);
-                return res.send(`Bad ID string: ${id}`);
+                return Util.sendJsonError(res, `Bad ID string: ${id}`);
             }
 
             this.db.moddedSubreddits.findAll({
@@ -229,7 +236,10 @@ class WebServer {
                     },
                 }))
                 .then(() => res.sendStatus(200))
-                .catch(error => Util.logError(error, 'Could not delete an existing mapping', res));
+                .catch(error => {
+                    Util.sendJsonError(res, `Could not delete an existing mapping: ${error.message}`, false);
+                    Util.logError(error, 'Could not delete an existing mapping');
+                });
         });
         this.express.get('/settings/existing-mappings', (req, res) => {
             if (!req.user) {

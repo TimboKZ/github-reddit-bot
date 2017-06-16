@@ -81,6 +81,11 @@
             </tr>
             </tbody>
         </table>
+
+        <div v-if="mappingError">
+            <div class="alert alert-danger" role="alert"><strong>Oh snap!</strong> \{{mappingError}}</div>
+        </div>
+
     </div>
 </div>
 
@@ -132,7 +137,12 @@
             deleteSub: function (id) {
                 var self = this;
                 axios.delete('/settings/modded-subs/' + id)
-                        .then(function() {
+                        .then(function(response) {
+                            if(response.data.error) {
+                                self.subError = response.data.error.message;
+                                return;
+                            }
+                            self.subError = false;
                             self.fetchModdedSubs()
                         })
                         .catch(function(error) {
@@ -152,7 +162,12 @@
                     repo: self.mappingInput.repo,
                     subreddit: self.mappingInput.subreddit,
                 })
-                        .then(function() {
+                        .then(function(response) {
+                            if(response.data.error) {
+                                self.mappingError = response.data.error.message;
+                                return;
+                            }
+                            self.mappingError = false;
                             self.mappingInput.repo = '';
                             self.mappingInput.subreddit = '';
                             self.fetchMappings()
@@ -164,7 +179,12 @@
             deleteMapping: function (id) {
                 var self = this;
                 axios.delete('/settings/existing-mappings/' + id)
-                        .then(function() {
+                        .then(function(response) {
+                            if(response.data.error) {
+                                self.mappingError = response.data.error.message;
+                                return;
+                            }
+                            self.mappingError = false;
                             self.fetchMappings()
                         })
                         .catch(function(error) {
