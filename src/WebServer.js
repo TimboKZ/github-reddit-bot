@@ -186,6 +186,10 @@ class WebServer {
             this.reddit.subredditExists(subreddit)
                 .then(exists => {
                     if (!exists) Util.sendJsonError(res, `Subreddit ${subreddit} does not exist!`);
+                    return this.reddit.botIsAMod(subreddit, this.config.username);
+                })
+                .then((botIsAMod) => {
+                    if (!botIsAMod) Util.sendJsonError(res, `The bot (${this.config.username}) is not a mod of ${subreddit}!`);
                     return RedditClient.hasMod(subreddit, req.user.name);
                 })
                 .then(isMod => {

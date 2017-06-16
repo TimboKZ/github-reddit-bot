@@ -86,6 +86,16 @@ class RedditClient {
 
     /**
      * @param {string} subName
+     * @param {string} botName
+     * @return Promise<boolean>
+     */
+    botIsAMod(subName, botName) {
+        return this.reddit.getSubreddit(subName).acceptModeratorInvite()
+            .then(() => RedditClient.hasMod(subName, botName));
+    }
+
+    /**
+     * @param {string} subName
      * @param {string} username
      */
     static hasMod(subName, username) {
