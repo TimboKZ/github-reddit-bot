@@ -18,7 +18,7 @@ class Util {
         console.error(message);
         console.error(error.message);
         console.error(error.stack);
-        if (res && !res._headerSent) {
+        if (res && !res.headerSent) {
             res.status(status);
             res.send(`${message}: ${error.message}`);
         }
