@@ -231,11 +231,22 @@ class WebServer {
             if (!req.user) {
                 return res.sendStatus(401);
             }
-            this.db.activeRepos.findAll({
+
+            this.db.moddedSubreddits.findAll({
                 where: {
-                    author: req.user.name,
+                    user: req.user.name,
                 },
             })
+                .then(subs => this.db.activeRepos.findAll({
+                    where: {
+                        $or: {
+                            subredditName: {
+                                $in: subs,
+                            },
+                            author: req.user.name,
+                        },
+                    },
+                }))
                 .then(mappings => {
                     let jsonMappings = [];
                     _.forEach(mappings, (mapping) => {
