@@ -213,6 +213,7 @@ class WebServer {
                     user: req.user.name,
                 },
             })
+                .then(subs => _.map(subs, sub => sub.get('subreddit')))
                 .then(subs => this.db.activeRepos.destroy({
                     where: {
                         id,
@@ -221,7 +222,8 @@ class WebServer {
                                 subredditName: {
                                     $in: subs,
                                 },
-                            }, {
+                            },
+                            {
                                 author: req.user.name,
                             },
                         ],
@@ -240,6 +242,7 @@ class WebServer {
                     user: req.user.name,
                 },
             })
+                .then(subs => _.map(subs, sub => sub.get('subreddit')))
                 .then(subs => this.db.activeRepos.findAll({
                     where: {
                         $or: [
