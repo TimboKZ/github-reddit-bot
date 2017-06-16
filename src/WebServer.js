@@ -216,12 +216,15 @@ class WebServer {
                 .then(subs => this.db.activeRepos.destroy({
                     where: {
                         id,
-                        $or: {
-                            subredditName: {
-                                $in: subs,
+                        $or: [
+                            {
+                                subredditName: {
+                                    $in: subs,
+                                },
+                            }, {
+                                author: req.user.name,
                             },
-                            author: req.user.name,
-                        },
+                        ],
                     },
                 }))
                 .then(() => res.sendStatus(200))
@@ -239,12 +242,15 @@ class WebServer {
             })
                 .then(subs => this.db.activeRepos.findAll({
                     where: {
-                        $or: {
-                            subredditName: {
-                                $in: subs,
+                        $or: [
+                            {
+                                subredditName: {
+                                    $in: subs,
+                                },
+                            }, {
+                                author: req.user.name,
                             },
-                            author: req.user.name,
-                        },
+                        ],
                     },
                 }))
                 .then(mappings => {
