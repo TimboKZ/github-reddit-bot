@@ -118,7 +118,7 @@
                 axios.put('/settings/modded-subs', {subreddit: self.subInput})
                         .then(function(response) {
                             if(response.data.error) {
-                                subError = response.data.error.message;
+                                self.subError = response.data.error.message;
                                 return;
                             }
                             self.subError = false;
