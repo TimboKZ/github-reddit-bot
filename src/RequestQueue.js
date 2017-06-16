@@ -6,6 +6,8 @@
 
 'use strict';
 
+const PostGenerator = require('./PostGenerator');
+
 class Request {
     /**
      * @param {string} deliveryId
@@ -39,12 +41,15 @@ class RequestQueue {
      */
     add(request) {
         this.findRepoToSubMapping(request)
-            .then(mapping => this.db.postQueue.create({
-                id: request.deliveryId,
-                subreddit: mapping.get('subredditName'),
-                title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
-                text: JSON.stringify(request.payload, null, 4),
-            }))
+            .then(mapping => {
+                let post = PostGenerator.createPost(mapping, request);
+                this.db.postQueue.create({
+                    id: request.deliveryId,
+                    subreddit: mapping.get('subredditName'),
+                    title: post.title,
+                    text: post.text,
+                });
+            })
             .then(() => {
                 console.log(`Delivery #${request.deliveryId} added to post queue!`);
             })
