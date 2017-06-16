@@ -40,16 +40,22 @@ class Bot {
                 console.log('Connected to database.');
 
                 let forceSync = false;
-                this.db.moddedSubreddits.sync({force: forceSync}).then(() => this.db.moddedSubreddits.create({
-                    user: 'Timbo_KZ',
-                    subreddit: 'GithubRedditBot',
-                }));
-                this.db.activeRepos.sync({force: forceSync}).then(() => this.db.activeRepos.create({
-                    repoName: 'TimboKZ/github-reddit-bot',
-                    subredditName: 'GithubRedditBot',
-                    author: 'Timbo_KZ',
-                    secret: 'HelloWorld123',
-                }));
+                this.db.moddedSubreddits.sync({force: forceSync}).then(() => {
+                    if(!forceSync) return;
+                    this.db.moddedSubreddits.create({
+                        user: 'Timbo_KZ',
+                        subreddit: 'GithubRedditBot',
+                    });
+                });
+                this.db.activeRepos.sync({force: forceSync}).then(() => {
+                    if(!forceSync) return;
+                    this.db.activeRepos.create({
+                        repoName: 'TimboKZ/github-reddit-bot',
+                        subredditName: 'GithubRedditBot',
+                        author: 'Timbo_KZ',
+                        secret: 'HelloWorld123',
+                    });
+                });
                 this.db.postQueue.sync({force: forceSync});
 
                 console.log('Connecting to Reddit...');
