@@ -23,14 +23,25 @@
 
         <p>Adding a subreddit here will allow you to see all mappings associated with this subreddit. A check will be performed to confirm that you are indeed a moderator of the subreddit you've entered.</p>
 
-        <ol>
-            <li v-for="sub in moddedSubs">
-                \{{ sub.subreddit }} <button class="btn btn-danger" v-on:click="deleteSub(sub.id)">Delete</button>
-            </li>
-            <li><input v-model="subInput" class="form-control" placeholder="Enter a subreddit name">
-                <button class="btn btn-primary" v-on:click="addSub">Add</button>
-            </li>
-        </ol>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Subreddit</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="sub in moddedSubs">
+                <td>\{{ sub.subreddit }}</td>
+                <td><button class="btn btn-danger" v-on:click="deleteSub(sub.id)">Delete</button></td>
+            </tr>
+            <tr>
+                <!-- TODO: Add onKeyUp:Enter to all forms -->
+                <td><input v-model="subInput" class="form-control" placeholder="Enter a subreddit name"></td>
+                <td><button class="btn btn-primary" v-on:click="addSub">Add</button></td>
+            </tr>
+            </tbody>
+        </table>
 
         <hr>
 
@@ -122,7 +133,32 @@
                         .then(function(response) {
                             self.mappings = response.data;
                         });
-            }
+            },
+            addMapping: function () {
+                var self = this;
+                axios.put('/settings/existing-mappings', {
+                    repo: self.mappingInput.repo,
+                    subreddit: self.mappingInput.subreddit,
+                })
+                        .then(function() {
+                            self.mappingInput.repo = '';
+                            self.mappingInput.subreddit = '';
+                            self.fetchMappings()
+                        })
+                        .catch(function(error) {
+                            console.error(error.message);
+                        });
+            },
+            deleteMapping: function (id) {
+                var self = this;
+                axios.delete('/settings/existing-mappings/' + id)
+                        .then(function() {
+                            self.fetchMappings()
+                        })
+                        .catch(function(error) {
+                            console.error(error.message);
+                        });
+            },
         },
     });
 </script>
@@ -130,7 +166,7 @@
     <tr>
         <td>\{{ mapping.repo }}</td>
         <td>\{{ mapping.subreddit }}</td>
-        <td>\{{ mapping.author }}</></td>
+        <td>\{{ mapping.author }}</td>
         <td><code>\{{ mapping.secret }}</code></td>
         <td><button class="btn btn-danger" v-on:click="deleteMapping(mapping.id)">Delete</button></td>
     </tr>
