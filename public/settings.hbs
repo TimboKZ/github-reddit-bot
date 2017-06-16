@@ -67,7 +67,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr is="mapping-item" v-for="mapping in mappings" :mapping="mapping"></tr>
+            <tr v-for="mapping in mappings">
+                <td>\{{ mapping.repo }}</td>
+                <td>\{{ mapping.subreddit }}</td>
+                <td>\{{ mapping.author }}</td>
+                <td><code>\{{ mapping.secret }}</code></td>
+                <td><button class="btn btn-danger" v-on:click="deleteMapping(mapping.id)">Delete</button></td>
+            </tr>
             <tr>
                 <td><input v-model="mappingInput.repo" class="form-control" placeholder="Enter a repository name"></td>
                 <td>
@@ -90,15 +96,6 @@
 </div>
 
 <script>
-    Vue.component('mapping-item', {
-        template: '#mapping-item-template',
-        props: ['mapping'],
-        methods: {
-            deleteMapping: function (id) {
-                this.$dispatch('deleteMapping', id)
-            },
-        },
-    });
     new Vue({
         el: '#app',
         data: {
@@ -198,15 +195,6 @@
             },
         },
     });
-</script>
-<script type="text/x-template" id="mapping-item-template">
-    <tr>
-        <td>\{{ mapping.repo }}</td>
-        <td>\{{ mapping.subreddit }}</td>
-        <td>\{{ mapping.author }}</td>
-        <td><code>\{{ mapping.secret }}</code></td>
-        <td><button class="btn btn-danger" v-on:click="deleteMapping(mapping.id)">Delete</button></td>
-    </tr>
 </script>
 
 </body>
