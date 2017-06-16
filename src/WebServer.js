@@ -105,17 +105,16 @@ class WebServer {
             }
             let subreddit = req.body.subreddit;
             if (!subreddit || subreddit === '') {
-                res.status(400);
-                return res.send(`Bad subreddit string: ${subreddit}`);
+                return Util.sendJsonError(res, `Bad subreddit string: ${subreddit}`);
             }
 
             this.reddit.subredditExists(subreddit)
                 .then(exists => {
-                    if (!exists) throw new Error(`Subreddit ${subreddit} does not exist!`);
+                    if (!exists) Util.sendJsonError(res, `Subreddit ${subreddit} does not exist!`);
                     return RedditClient.hasMod(subreddit, req.user.name);
                 })
                 .then(isMod => {
-                    if (!isMod) throw new Error(`You're not a mod of ${subreddit}!`);
+                    if (!isMod) Util.sendJsonError(res, `Subreddit ${subreddit} does not exist!`);
                     return this.db.moddedSubreddits.create({
                         user: req.user.name,
                         subreddit: subreddit,

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>GitHub Reddit Bot</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -42,6 +43,10 @@
             </tr>
             </tbody>
         </table>
+
+        <div v-if="subError">
+            <div class="alert alert-danger" role="alert"><strong>Oh snap!</strong> \{{subError}}</div>
+        </div>
 
         <hr>
 
@@ -89,11 +94,13 @@
         data: {
             moddedSubs: [],
             subInput: '',
+            subError: false,
             mappings: [],
             mappingInput: {
                 repo: '',
                 subreddit: '',
-            }
+            },
+            mappingError: false,
         },
         created: function () {
             this.fetchModdedSubs();
@@ -109,7 +116,12 @@
             addSub: function () {
                 var self = this;
                 axios.put('/settings/modded-subs', {subreddit: self.subInput})
-                        .then(function() {
+                        .then(function(response) {
+                            if(response.data.error) {
+                                subError = response.data.error.message;
+                                return;
+                            }
+                            self.subError = false;
                             self.subInput = '';
                             self.fetchModdedSubs()
                         })

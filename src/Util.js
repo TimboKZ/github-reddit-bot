@@ -18,9 +18,26 @@ class Util {
         console.error(message);
         console.error(error.message);
         console.error(error.stack);
-        if (res) {
+        if (res && !res._headerSent) {
             res.status(status);
             res.send(`${message}: ${error.message}`);
+        }
+    }
+
+    /**
+     * @param {Response} res
+     * @param {string} message
+     * @param {boolean} [throwError]
+     */
+    static sendJsonError(res, message, throwError = true) {
+        res.status(200);
+        res.json({
+            error: {
+                message,
+            },
+        });
+        if(throwError) {
+            throw new Error(message);
         }
     }
 
