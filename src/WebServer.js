@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const passport = require('passport');
 const exphbs = require('express-handlebars');
+const crypto = require('crypto');
 const RedditStrategy = require('passport-reddit').Strategy;
 const Promise = require('bluebird');
 const _ = require('lodash');
@@ -162,6 +163,69 @@ class WebServer {
                     res.send(jsonSubs);
                 })
                 .catch(error => Util.logError(error, 'Could not fetch modded subs for user:', res));
+        });
+        this.express.put('/settings/existing-mappings', (req, res) => {
+            if (!req.user) {
+                return res.sendStatus(401);
+            }
+            let repo = req.body.repo;
+            let subreddit = req.body.subreddit;
+            if (!repo || repo === '') {
+                res.status(400);
+                return res.send(`Bad repo string: ${repo}`);
+            }
+            if (!subreddit || subreddit === '') {
+                res.status(400);
+                return res.send(`Bad subreddit string: ${subreddit}`);
+            }
+
+            this.reddit.subredditExists(subreddit)
+                .then(exists => {
+                    if (!exists) throw new Error(`Subreddit ${subreddit} does not exist!`);
+                    return RedditClient.hasMod(subreddit, req.user.name);
+                })
+                .then(isMod => {
+                    if (!isMod) throw new Error(`You're not a mod of ${subreddit}!`);
+                    let random = Math.random().toString();
+                    let secret = crypto.createHash('sha1').update(repo + subreddit + random).digest('hex');
+                    return this.db.activeRepos.create({
+                        repoName: repo,
+                        subredditName: subreddit,
+                        author: req.user.name,
+                        secret,
+                    });
+                })
+                .then(() => res.sendStatus(200))
+                .catch(error => Util.logError(error, 'Could not add a mapping sub for user', res));
+        });
+        this.express.delete('/settings/existing-mappings/:id', (req, res) => {
+            if (!req.user) {
+                return res.sendStatus(401);
+            }
+            let id = req.params.id;
+            if (!id || id === '') {
+                res.status(400);
+                return res.send(`Bad ID string: ${id}`);
+            }
+
+            this.db.moddedSubreddits.findAll({
+                where: {
+                    user: req.user.name,
+                },
+            })
+                .then(subs => this.db.activeRepos.destroy({
+                    where: {
+                        id,
+                        $or: {
+                            subredditName: {
+                                $in: subs,
+                            },
+                            author: req.user.name,
+                        },
+                    },
+                }))
+                .then(() => res.sendStatus(200))
+                .catch(error => Util.logError(error, 'Could not delete an existing mapping', res));
         });
         this.express.get('/settings/existing-mappings', (req, res) => {
             if (!req.user) {
