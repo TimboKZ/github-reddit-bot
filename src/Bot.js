@@ -14,7 +14,7 @@ const WebServer = require('./WebServer');
 class Bot {
 
     /**
-     * @type {{port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
+     * @param {{url: string, port: number, dbUrl: string, userAgent: string, clientId: string, clientSecret: string, username: string, password: string}} config
      */
     constructor(config) {
         this.config = config;
@@ -29,7 +29,7 @@ class Bot {
             this.config.userAgent,
             this.queue
         );
-        this.server = new WebServer(this.config.port, this.queue);
+        this.server = new WebServer(this.config, this.reddit, this.db, this.queue);
     }
 
     start() {
@@ -39,13 +39,24 @@ class Bot {
             .then(() => {
                 console.log('Connected to database.');
 
-                this.db.activeRepos.sync({force: true}).then(() => {
-                    return this.db.activeRepos.create({
-                        repoName: 'TimboKZ/github-reddit-bot',
-                        subredditName: 'GithubRedditBot'
+                let forceSync = false;
+                this.db.moddedSubreddits.sync({force: forceSync}).then(() => {
+                    if(!forceSync) return;
+                    this.db.moddedSubreddits.create({
+                        user: 'Timbo_KZ',
+                        subreddit: 'GithubRedditBot',
                     });
                 });
-                this.db.postQueue.sync({force: true});
+                this.db.activeRepos.sync({force: forceSync}).then(() => {
+                    if(!forceSync) return;
+                    this.db.activeRepos.create({
+                        repoName: 'TimboKZ/github-reddit-bot',
+                        subredditName: 'GithubRedditBot',
+                        author: 'Timbo_KZ',
+                        secret: 'HelloWorld123',
+                    });
+                });
+                this.db.postQueue.sync({force: forceSync});
 
                 console.log('Connecting to Reddit...');
                 return this.reddit.testConnection();

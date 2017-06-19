@@ -6,6 +6,8 @@
 
 'use strict';
 
+const PostGenerator = require('./PostGenerator');
+
 class Request {
     /**
      * @param {string} deliveryId
@@ -40,11 +42,12 @@ class RequestQueue {
     add(request) {
         this.findRepoToSubMapping(request)
             .then(mapping => {
-                return this.db.postQueue.create({
+                let post = PostGenerator.createPost(mapping, request);
+                this.db.postQueue.create({
                     id: request.deliveryId,
                     subreddit: mapping.get('subredditName'),
-                    title: `${request.payload.name}: ${request.eventType} (#${request.deliveryId})`,
-                    text: JSON.stringify(request.payload, null, 4)
+                    title: post.title,
+                    text: post.text,
                 });
             })
             .then(() => {
@@ -65,9 +68,9 @@ class RequestQueue {
             .findOne({
                 where: {
                     repoName: {
-                        $iLike: request.payload.name
-                    }
-                }
+                        $iLike: request.payload.name,
+                    },
+                },
             });
     }
 
@@ -75,14 +78,14 @@ class RequestQueue {
         return this.db.postQueue
             .findAll({
                 where: {
-                    completed: false
-                }
+                    completed: false,
+                },
             });
     }
 
     completeRequest(request) {
         return request.update({
-            completed: true
+            completed: true,
         });
     }
 

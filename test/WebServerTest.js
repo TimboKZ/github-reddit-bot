@@ -10,7 +10,11 @@ const Promise = require('bluebird');
 const request = require('supertest');
 const WebServer = require('../src/WebServer');
 
-const PORT = 5000;
+const config = {
+    clientId: '123',
+    clientSecret: '123',
+    port: 5000,
+};
 
 describe('WebServer', () => {
 
@@ -22,9 +26,9 @@ describe('WebServer', () => {
                 new Promise((resolve) => {
                     resolve();
                 });
-            }
+            },
         };
-        server = new WebServer(PORT, queueMock);
+        server = new WebServer(config, {}, {}, queueMock);
         server.start();
     });
 
@@ -33,7 +37,7 @@ describe('WebServer', () => {
     });
 
     describe('root URL (/)', () => {
-        it('should return index.html', (done) => {
+        it('should return index.hbs', (done) => {
             request(server.express)
                 .get('/')
                 .expect('Content-Type', /text\/html/)

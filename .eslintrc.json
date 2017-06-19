@@ -35,6 +35,9 @@
       "error",
       "always"
     ],
-    "no-console": "off"
+    "no-console": "off",
+    "comma-dangle": ["error", "always-multiline"],
+    "prefer-template": "error",
+    "arrow-body-style": ["error", "as-needed"]
   }
 }

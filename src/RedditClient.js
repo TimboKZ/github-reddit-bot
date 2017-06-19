@@ -8,6 +8,8 @@
 
 const Promise = require('bluebird');
 const snoowrap = require('snoowrap');
+const fetch = require('node-fetch');
+const _ = require('lodash');
 
 class RedditClient {
 
@@ -33,21 +35,23 @@ class RedditClient {
     processQueue() {
         this.queue.getIncompleteRequests()
             .then((incompleteRequests) => {
+                // TODO: Add moderator check - accept moderator invite if necessary
                 console.log(`Processing ${incompleteRequests.length} incomplete requests...`);
                 incompleteRequests.forEach(request => {
                     this.submitSelfPost(
                         request.get('subreddit'),
                         request.get('title'),
                         request.get('text')
-                    ).then(() => {
-                        return this.queue.completeRequest(request);
-                    }).then(() => {
-                        console.log(`Request #${request.get('id')} was completed.`);
-                    }).catch((error) => {
-                        console.error('Could not complete request by posting on reddit!');
-                        console.error(error.message);
-                        console.error(error.stack);
-                    });
+                    )
+                        .then(() => this.queue.completeRequest(request))
+                        .then(() => {
+                            console.log(`Request #${request.get('id')} was completed.`);
+                        })
+                        .catch((error) => {
+                            console.error('Could not complete request by posting on reddit!');
+                            console.error(error.message);
+                            console.error(error.stack);
+                        });
                 });
             })
             .catch((error) => {
@@ -64,8 +68,75 @@ class RedditClient {
             .submitSelfpost({
                 title,
                 text,
-                sendReplies: false
+                sendReplies: false,
             });
+    }
+
+    /**
+     * @param {string} subName
+     * @return Promise<boolean>
+     */
+    subredditExists(subName) {
+        return new Promise((resolve) => {
+            this.reddit.getSubreddit(subName).getHot()
+                .then(() => resolve(true))
+                .catch(() => resolve(false));
+        });
+    }
+
+    /**
+     * @param {string} subName
+     * @param {string} botName
+     * @return Promise<boolean>
+     */
+    botIsAMod(subName, botName) {
+        return new Promise((resolve, reject) => {
+            RedditClient.hasMod(subName, botName)
+                .then(botIsAMod => {
+                    if(botIsAMod) return resolve(true);
+                    this.reddit.getSubreddit(subName).acceptModeratorInvite()
+                        .then(RedditClient.hasMod(subName, botName))
+                        .then(botIsAMod => resolve(botIsAMod))
+                        .catch(error => {
+                            if(error.message.indexOf('NO_INVITE_FOUND') !== -1) return resolve(false);
+                            reject(error);
+                        });
+                })
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     * @param {string} subName
+     * @param {string} username
+     */
+    static hasMod(subName, username) {
+        return new Promise((resolve, reject) => {
+            RedditClient.getSubMods(subName)
+                .then(modNames => {
+                    let lowerCaseNames = _.map(modNames, name => name.toLowerCase());
+                    resolve(lowerCaseNames.includes(username.toLowerCase()));
+                })
+                .catch(error => reject(error));
+        });
+    }
+
+    /**
+     * @param {string} subName
+     * @return Promise<string[]>
+     */
+    static getSubMods(subName) {
+        let modInfoUrl = `https://reddit.com/r/${subName}/about/moderators.json`;
+        return new Promise((resolve, reject) => {
+            fetch(modInfoUrl)
+                .then(res => res.json())
+                .then(json => {
+                    let mods = json.data.children;
+                    let modNames = _.flatMap(mods, mod => mod.name);
+                    resolve(modNames);
+                })
+                .catch(error => reject(error));
+        });
     }
 
 }
